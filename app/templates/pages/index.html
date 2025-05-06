@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Python With Training Wheels</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesheet.css') }}">
+</head>
+<body>
+  <div style="display: flex; height: 100vh;">
+    <!-- Left: Multi-step form -->
+    <div id="form-pane" style="flex: 1; padding: 20px;">
+      <div class="form-step" id="step-1">
+        <h2>Step 1: Runtime Environment</h2>
+        <select id="env-select">
+          <option value="jupyter">Jupyter</option>
+          <option value="vscode">VS Code</option>
+          <option value="colab">Google Colab</option>
+        </select>
+        <button onclick="nextStep(1)">Next</button>
+      </div>
+  
+      <div class="form-step" id="step-2" style="display: none;">
+        <h2>Step 2: Choose Plot Type</h2>
+        <select id="plot-select">
+          <option value="default">Plot Type</option>
+          <option value="line">Line Plot</option>
+          <option value="scatter">Scatter Plot</option>
+        </select>
+        <button onclick="prevStep(2)">Back</button>
+        <button onclick="nextStep(2)">Next</button>
+      </div>
+
+      <div class="form-step" id="step-3" style="display: none;">
+        <h2>Step 3: Import data</h2>
+        <button onclick="prevStep(3)">Back</button>
+        <button onclick="nextStep(3)">Next</button>
+      </div>
+      <!-- Add more steps as needed -->
+    </div>
+  
+    <!-- Right: Code preview -->
+    <div id="code-pane" style="flex: 1; background: #f5f5f5; padding: 20px; overflow-y: auto;">
+      <h2>Generated Python Code</h2>
+      <pre id="code-preview" style="white-space: pre-wrap; font-family: monospace;">
+        # Generated Python Code Appears Here
+      </pre>
+    </div>
+  </div>
+  <script src="{{ url_for('static', filename='js/navigation.js') }}"></script>
+</body>
