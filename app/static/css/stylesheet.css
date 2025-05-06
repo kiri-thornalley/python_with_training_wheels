@@ -1,0 +1,28 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.workflow {
+    width: 48%;
+    padding: 20px;
+    border-right: 2px solid #ccc;
+}
+
+.code-preview {
+    width: 48%;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-left: 2px solid #ccc;
+}
+
+pre {
+    background-color: #1e1e1e;
+    color: #dcdcdc;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: "Courier New", monospace;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
