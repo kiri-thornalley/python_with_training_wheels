@@ -17,22 +17,53 @@
         </select>
         <button onclick="nextStep(1)">Next</button>
       </div>
-  
+      
       <div class="form-step" id="step-2" style="display: none;">
-        <h2>Step 2: Choose Plot Type</h2>
+        <h2>Step 2: Set Plot Theme</h2>
+        <h3>Select Context</h3>
+        <p>Where will this figure be used? This scales the size of plot elements</p>
+        <select id="context-select">
+          <option value="default">Select Context</option>
+          <option value="paper">Paper</option>
+          <option value="notebook">Notebook</option>
+          <option value="talk">Talk</option>
+          <option value="poster">Poster</option>
+        </select>
+        <h3>Select Style</h3>
+        <p>What does the Style param modify?</p>
+        <select id="style-select">
+          <option value="ticks">Ticks</option>
+          <option value="white">White</option>
+          <option value="whitegrid">White (with grid)</option>
+          <option value="dark">Dark</option>
+          <option value="darkgrid">Dark (with grid)</option>
+        </select>
+        <h3>Select colour palette</h3>
+        Only colourblind-friendly palettes are offered here
+        <select id="palette-select">
+          <option value="viridis">Viridis (Seaborn)</option>
+          <option value="tab20">tab20</option>
+          <option value="deep">Deep</option>
+        </select>
+        <button onclick="nextStep(2)">Next</button>
+        <button onclick="prevStep(2)">Back</button>
+      </div>
+  
+      <div class="form-step" id="step-3" style="display: none;">
+        <h2>Step 3: Choose Plot Type</h2>
         <select id="plot-select">
           <option value="default">Plot Type</option>
           <option value="line">Line Plot</option>
           <option value="scatter">Scatter Plot</option>
         </select>
-        <button onclick="prevStep(2)">Back</button>
-        <button onclick="nextStep(2)">Next</button>
+        <button onclick="nextStep(3)">Next</button>
+        <button onclick="prevStep(3)">Back</button>
       </div>
 
-      <div class="form-step" id="step-3" style="display: none;">
-        <h2>Step 3: Import data</h2>
-        <button onclick="prevStep(3)">Back</button>
-        <button onclick="nextStep(3)">Next</button>
+      <div class="form-step" id="step-4" style="display: none;">
+        <h2>Step 4: Import data</h2>
+        <button onclick="prevStep(4)">Back</button>
+        <button onclick="nextStep(4)">Next</button>
       </div>
       <!-- Add more steps as needed -->
     </div>
@@ -41,7 +72,7 @@
     <div id="code-pane" style="flex: 1; background: #f5f5f5; padding: 20px; overflow-y: auto;">
       <h2>Generated Python Code</h2>
       <pre id="code-preview" style="white-space: pre-wrap; font-family: monospace;">
-        # Generated Python Code Appears Here
+        # Your generated Python code will appear here
       </pre>
     </div>
   </div>
