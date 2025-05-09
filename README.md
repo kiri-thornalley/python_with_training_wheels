@@ -26,10 +26,6 @@ Further, this tool has been built with the accessibility of the outputted figure
 - **Preview your plot** as you configure it
 - **Export-ready code** for use in Google Colab, VS Code, or Jupyter notebooks.
 
-### Design Decisions
-#### Why no persistent file uploads?
-To keep the experience fast, stateless, and beginner-friendly, uploaded CSVs are never saved to disk. Instead, they're processed in-memory (via Pandas) and discarded when the session ends. This avoids file permission issues and nudges users toward owning their code and data in their preferred environment.
-
 ## Installation
 ### Prerequisites
 
