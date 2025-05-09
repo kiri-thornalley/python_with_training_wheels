@@ -1,3 +1,6 @@
+/*Import font - Montserrat*/
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
 .container {
     display: flex;
     justify-content: space-between;
@@ -25,4 +28,44 @@ pre {
     font-family: "Courier New", monospace;
     white-space: pre-wrap;
     word-wrap: break-word;
+}
+
+h2 {
+    font-family: 'Montserrat';
+    font-size: 14pt;
+}
+
+h3 {
+    font-family: 'Montserrat';
+    font-size: 12pt;
+    color: black;
+    margin-block-start: 0.5em;
+    margin-block-end: 0.5em;
+}
+
+p {
+    font-family: 'Montserrat';
+    font-size: 11pt;
+    color: black;
+    margin-block-start: 0.5em;
+    margin-block-end: 0.5em;
+}
+button{
+    background-color: #bbb8ba;
+    color: #fff;
+    font-size: 12px;
+    padding: 10px 25px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-left: 10px;
+    cursor: pointer;
+}
+select {
+    font-family: 'Montserrat'; 
+    color: black;
+    border-radius: 5px;
+    margin-bottom: 20px;
 }
