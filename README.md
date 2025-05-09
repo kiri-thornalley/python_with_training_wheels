@@ -1,8 +1,10 @@
 # 🐍 Python With Training Wheels
 
-**A beginner-friendly web app for generating Matplotlib and Seaborn plots with PEP-8 compliant code and real-time code previews.**
+>“Got bored, accidentally automated a well-loved Python plotting library. Oops.”
 
-This tool lets you interactively generate beautiful Matplotlib and Seaborn plots step by step — and gives you clean Python code as you go. It’s a great learning tool, a plotting assistant, or a quick way to scaffold data visualizations.
+This project started as a tool to help me make quick, reproducible Matplotlib/Seaborn plots without wrestling boilerplate code. It quickly turned into a full-stack web app that writes Python for you as you build the figure — and I still don’t know how we got here.
+
+Upload a CSV, click through a few steps, get a working .py or .ipynb file — all without needing to know Matplotlib internals. (But you’ll probably end up learning them anyway.)
 
 ## Table of Contents
 - [Description](#description)
