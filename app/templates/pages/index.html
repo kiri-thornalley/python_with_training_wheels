@@ -2,6 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Python With Training Wheels</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesheet.css') }}">
 </head>
 <body>
@@ -17,15 +18,31 @@
         </select>
         <button onclick="nextStep(1)">Next</button>
       </div>
-      
+
       <div class="form-step" id="step-2" style="display: none;">
-        <h2>Step 2: Set Plot Theme</h2>
+        <h2>Step 2: Import data</h2>
+        <p>
+          Note: This app currently only accepts .csv files, and doesn't permanently store your file. It's loaded in memory for this session only.
+          Be sure to export your code to Colab, VS Code, or commit to GitHub when you're done.
+        </p>
+        <form id="upload-form" enctype="multipart/form-data">
+          <input type="file" name="csv_file" accept=".csv" required>
+          <button type="submit">Upload CSV</button>
+        </form>
+        <br>
+        <div id="upload-status"></div>
+        <br>
+        <button onclick="prevStep(2)">Back</button>
+        <button onclick="nextStep(2)" disabled>Next</button>
+      </div>
+      
+      <div class="form-step" id="step-3" style="display: none;">
+        <h2>Step 3: Set Plot Theme</h2>
         <h3>Select Context</h3>
         <p>Where will this figure be used? This scales the size of plot elements</p>
         <select id="context-select">
-          <option value="default">Select Context</option>
-          <option value="paper">Paper</option>
           <option value="notebook">Notebook</option>
+          <option value="paper">Paper</option>
           <option value="talk">Talk</option>
           <option value="poster">Poster</option>
         </select>
@@ -39,33 +56,106 @@
           <option value="darkgrid">Dark (with grid)</option>
         </select>
         <h3>Select colour palette</h3>
-        Only colourblind-friendly palettes are offered here
+        <p>Only colourblind-friendly palettes are offered here</p>
         <select id="palette-select">
-          <option value="viridis">Viridis (Seaborn)</option>
-          <option value="tab20">tab20</option>
-          <option value="deep">Deep</option>
-        </select>
-        <button onclick="nextStep(2)">Next</button>
-        <button onclick="prevStep(2)">Back</button>
-      </div>
-  
-      <div class="form-step" id="step-3" style="display: none;">
-        <h2>Step 3: Choose Plot Type</h2>
-        <select id="plot-select">
-          <option value="default">Plot Type</option>
-          <option value="line">Line Plot</option>
-          <option value="scatter">Scatter Plot</option>
-        </select>
+          <option value="viridis">Viridis</option>
+          <option value="magma">Magma</option>
+          <option value="plasma">Plasma</option>
+          <option value="inferno">Inferno</option>
+        </select> <br>
         <button onclick="nextStep(3)">Next</button>
         <button onclick="prevStep(3)">Back</button>
       </div>
-
+  
       <div class="form-step" id="step-4" style="display: none;">
-        <h2>Step 4: Import data</h2>
-        <button onclick="prevStep(4)">Back</button>
+        <h2>Step 4: Choose Plot Type</h2>
+          <select id="plot-select" onchange="onPlotTypeChange(); updatePlotPreview();">
+          <option value="">Choose plot type</option>
+          {% for key, config in plot_types.items() %}
+            <option value="{{ key }}">{{ config.label }}</option>
+          {% endfor %}
+        </select>
+        
+        {% for key, config in plot_types.items() %}
+          <div class="plot-args" id="args-{{ key }}" style="display: none; margin-top: 10px;">
+            <!--Basic config-->
+            {% for arg in config.args %}
+              <label for="{{ key }}-{{ arg.name }}">{{ arg.label }}:</label>
+              {% if arg.type == "column" %}
+                <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" class="column-select" onchange="generatePlotPreview()">
+                  <option value="">Select column</option>
+                </select>
+              {% elif arg.type == "boolean" %}
+                <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" onchange="generatePlotPreview()">
+                  <option value="true" {% if arg.default == 'true' %}selected{% endif %}>True</option>
+                  <option value="false" {% if arg.default == 'false' %}selected{% endif %}>False</option>
+                </select>
+              {% else %}
+                <input id="{{ key }}-{{ arg.name }}"
+                      type="{{ arg.type }}"
+                      name="{{ arg.name }}"
+                      {% if arg.default is defined %}value="{{ arg.default }}"{% endif %}
+                      {% if arg.min %}min="{{ arg.min }}"{% endif %}
+                      {% if arg.max %}max="{{ arg.max }}"{% endif %}
+                      {% if arg.step %}step="{{ arg.step }}"{% endif %}
+                      onchange="generatePlotPreview()">
+              {% endif %}
+              <br>
+            {% endfor %}
+              <!-- Advanced Arguments Accordion -->
+            {% if config.advanced %}
+            <details style="margin-top: 10px;">
+              <summary style="cursor: pointer;">Advanced Options</summary>
+              <div style="margin-top: 10px;">
+                {% for arg in config.advanced %}
+                  <label for="{{ key }}-{{ arg.name }}">{{ arg.label }}:</label>
+                  {% if arg.type == "column" %}
+                    <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" class="column-select" onchange="generatePlotPreview()">
+                      <option value="">Select column</option>
+                    </select>
+                  {% elif arg.type == "Boolean" %}
+                    <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" onchange="generatePlotPreview()">
+                      <option value="true" {% if arg.default == 'true' %}selected{% endif %}>True</option>
+                      <option value="false" {% if arg.default == 'false' %}selected{% endif %}>False</option>
+                    </select>
+                  {% else %}
+                    <input id="{{ key }}-{{ arg.name }}"
+                          type="{{ arg.type }}"
+                          name="{{ arg.name }}" onchange="generatePlotPreview()">
+                  {% endif %}
+                  <br>
+                {% endfor %}
+              </div>
+            </details>
+          {% endif %}
+          </div>
+        {% endfor %}
+        </select>
         <button onclick="nextStep(4)">Next</button>
+        <button onclick="prevStep(4)">Back</button>
       </div>
-      <!-- Add more steps as needed -->
+
+      <div class="form-step" id="step-5" style="display: none;">
+        <h2>Step 5: Add Labels</h2>
+        <label for="x-axis_label">x-axis Label:</label>
+          <input type="text" input name="x-axis_label" required><br>
+        <label for="y-axis_label">y-axis Label:</label>
+          <input type="text" input name="y-axis_label"><br>
+        <label for="figure_title">Figure Title:</label>
+          <input type="text" input name="y-axis_label"><br>
+        <label for="x-axis_min">X-axis Minimum:</label>
+          <input type="number" input name="x-axis_min"><br>
+        <label for="x-axis_max">X-axis Maximum:</label>
+          <input type="number" input name="x-axis_max"><br>
+        <label for="y-axis_min">Y-axis Minimum:</label>
+          <input type="number" input name="x-axis_min"><br>
+        <label for="y-axis_max">Y-axis Maximum:</label>
+          <input type="number" input name="x-axis_max"><br>
+
+        <button onclick="prevStep(5)">Back</button>
+        <!--<button>Export Code</button>
+        <button id="restart-button">Clear data and Reset</button>-->
+      </div>
     </div>
   
     <!-- Right: Code preview -->
@@ -74,7 +164,13 @@
       <pre id="code-preview" style="white-space: pre-wrap; font-family: monospace;">
         # Your generated Python code will appear here
       </pre>
-    </div>
+
+    <!--Figure Preview-->
+      <div id="plot-preview-container" style="display: none;">
+      <h2>Live Plot Preview</h2> 
+      <img id="plot-preview" style="max-width: 100%;" />
+      </div>
+      </div>
   </div>
   <script src="{{ url_for('static', filename='js/navigation.js') }}"></script>
 </body>
