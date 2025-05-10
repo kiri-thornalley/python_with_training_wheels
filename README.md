@@ -15,7 +15,7 @@ Upload a CSV, click through a few steps, get a working .py or .ipynb file — al
 - [Contact](#contact)
 
 ## Description
-This project is for educators, students, analysts, and anyone who wants to learn Python plotting by doing — with training wheels on, but with clean, exportable code when you're ready to ride solo. The tool ensures that the code generated is well-structured, and compliant with Black and Pylint, which is essential in research for transparency and future reproducibility.
+This project is for educators, students, analysts, and anyone who wants to learn Python plotting by doing — with training wheels on, but with clean, exportable code when you're ready to ride solo. The tool ensures that the code generated is well-structured, and compliant with Black and Pylint, which is essential in research for transparency and future reproducibility. We mostly focus on the figure types from matplotlib, as this gives the greatest level of control over the figures that are generated, but do switch to seaborn where certain plot types are otherwise unavailable or incredibly challenging to create in matplotlib. 
 Further, this tool has been built with the accessibility of the outputted figures in mind - when asked to select a colour palette for the figures, only colour-blind friendly options *e.g.,* viridis are presented to the user. 
 
 ### Features
