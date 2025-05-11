@@ -326,3 +326,42 @@ const userSelections = {
     });
 });
 })
+
+function exportCode() {
+  // Get the environment selected in Step 1
+  const envSelect = document.getElementById("env-select");
+  const selectedEnv = envSelect.value; // "jupyter", "vscode", or "colab"
+
+  // Get the generated Python code
+  const code = document.getElementById("code-preview").textContent;
+
+  // Determine the file extension based on the selected environment
+  let fileExtension = selectedEnv === "jupyter" ? ".ipynb" : ".py";
+  let filename = "generated_code" + fileExtension;
+
+  // Prepare the data to send to the backend
+  const data = {
+    code: code,
+    file_extension: fileExtension,
+  };
+
+  // Send the request to the backend to export the code
+  fetch('/export_code', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  .then(response => response.blob())
+  .then(blob => {
+    // Create a link to download the file
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+  })
+  .catch(error => {
+    console.error('Error exporting code:', error);
+  });
+}

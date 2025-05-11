@@ -1,5 +1,5 @@
 # Add new routes (i.e., pages) to the Flask app in here. 
-from flask import Blueprint, request,jsonify, render_template, session, send_file, abort
+from flask import Blueprint, request,jsonify, render_template, session, send_file, abort, Response
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
@@ -9,6 +9,7 @@ import uuid
 import os
 import shutil
 from werkzeug.utils import secure_filename
+import nbformat
 
 main_routes = Blueprint('main', __name__)
 
@@ -325,3 +326,36 @@ def reset_session():
         shutil.rmtree("static/uploads")
         session.clear()
     return "Session cleared", 200
+
+@main_routes.route('/export_code',  methods=['POST'] )
+def export_code():
+   # Get the request data
+    data = request.get_json()
+    code = data.get('code')
+    file_extension = data.get('file_extension')
+
+    # Check file extension and generate the correct file
+    if file_extension == ".ipynb":
+        # Generate a Jupyter notebook (.ipynb)
+        notebook = nbformat.v4.new_notebook()
+        notebook.cells.append(nbformat.v4.new_code_cell(code))
+        
+        # Write notebook to a file-like object in memory
+        response = Response(
+            nbformat.writes(notebook), 
+            mimetype='application/json',
+            headers={'Content-Disposition': 'attachment; filename=generated_code.ipynb'}
+        )
+        return response
+
+    elif file_extension == ".py":
+        # Generate a Python file (.py)
+        response = Response(
+            code, 
+            mimetype='text/plain',
+            headers={'Content-Disposition': 'attachment; filename=generated_code.py'}
+        )
+        return response
+
+    # If an unsupported file extension is requested, return an error
+    return Response("Unsupported file format", status=400)
