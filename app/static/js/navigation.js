@@ -11,13 +11,13 @@ const userSelections = {
     xAxisMax: null,
     yAxisMin: null,
     yAxisMax: null,
+
     plotArgs: {},
   };
   function populateColumnSelects(columns) {
     const columnSelects = document.querySelectorAll('.column-select');
     columnSelects.forEach(select => {
       select.innerHTML = '';
-
       const defaultOption = document.createElement('option');
       defaultOption.value = '';
       defaultOption.textContent = 'Select column';
@@ -103,6 +103,7 @@ const userSelections = {
       userSelections.xAxisMax = null;
       userSelections.yAxisMin = null;
       userSelections.yAxisMax = null;
+
     } else if (currentStep === 4) {
       userSelections.plotContext = null;
       userSelections.plotStyle = null;

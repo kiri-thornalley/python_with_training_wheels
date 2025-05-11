@@ -92,11 +92,17 @@ def home():
         #"label": "Heatmap",
         #"args": [
             #{"name": "annot", "label": "Annotations", "type": "Boolean", "default": 'false'},
-            #{"name": "vmin", "label": "Bar Width", "type": "number"},
-            #{"name": "vmax", "label": "Bar Width", "type": "number"},
-            #{"name": "color", "label": "Bar Color", "type": "text"}
-        #]
-    #},
+           #{"name": "width", "label": "Bar Width", "type": "number", "default": 1},
+            {"name": "bottom", "label": "Bottom", "type": "text"},
+            {"name": "align", "label": "Bar Alignment", "type": "text"}, # 'center', 'edge'}, default: 'center'
+            {"name": "color", "label": "Bar Color", "type": "text"} # call from preset palette
+        ],
+        "advanced": [
+            {"name": "yerr", "label": "Y-Error", "type": "column"},
+            {"name": "ecolor", "label": "Error Bar Color", "type": "text"}, # call from preset palette
+            #{"name":"log", "label":"Log Scale - Y-axis", "type":"Boolean", "default": 'false'}
+        ]
+    },
     #"line": {
         #"label": "Line Chart",
         #"args": [
@@ -309,7 +315,6 @@ def generate_plot():
             ax.text(0.5, 0.5, f"Plot type '{plot_type}' not yet implemented in Flask Backend", ha='center', va='center')
     except Exception as e:
         ax.text(0.5, 0.5, f"Plot error: {str(e)}", ha='center', va='center')
-
 
     # Convert plot to PNG
     buf = io.BytesIO()
