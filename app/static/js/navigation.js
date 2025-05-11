@@ -161,10 +161,13 @@ const userSelections = {
       } else if (userSelections.plotType === "density") {
         code += "";
       } else if (userSelections.plotType === "histogram") {
-        code += "Plot tHis if Histogram";
+        //code += `# Plot Histogram\n fig,ax = plt.subplots()\n ax.hist(data=df, '${plot.args}')`;
       } else if (userSelections.plotType === "violin") {
-        code += `# Plot Violin Plot\nsns.violinplot(data=df,)\nsns.despine(offset=10, trim=True)`;
-      }
+        if (userSelections.plotArgs) {
+          code += `# Plot Violin Plot\nsns.violinplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', data=df)\n`;
+        }
+          code += 'sns.despine(offset=10, trim=True)\n';
+      };
   
     document.getElementById("code-preview").textContent = code.trim();
   }
@@ -172,7 +175,11 @@ const userSelections = {
     function generatePlotPreview() {
       const plotType = userSelections.plotType;
       if (!plotType) return;
+        userSelections.figureTitle = document.getElementById('figure-title').value;
+        userSelections.xAxisLabel = document.getElementById('x-axis_label').value;
+        userSelections.yAxisLabel = document.getElementById('y-axis_label').value;
 
+        
       fetch("/generate_plot", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
