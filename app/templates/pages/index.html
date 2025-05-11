@@ -39,15 +39,16 @@
       <div class="form-step" id="step-3" style="display: none;">
         <h2>Step 3: Set Plot Theme</h2>
         <h3>Select Context</h3>
-        <p>Where will this figure be used? This scales the size of plot elements</p>
+        <p>Where will this figure be used? The context parameter scales the size of plot elements</p>
         <select id="context-select">
-          <option value="notebook">Notebook</option>
+          <option value="notebook" selected>Notebook</option>
           <option value="paper">Paper</option>
           <option value="talk">Talk</option>
           <option value="poster">Poster</option>
         </select>
         <h3>Select Style</h3>
-        <p>What does the Style param modify?</p>
+        <p>The style parameter calls one of a set of five inbuilt Seaborn themes for styling a figure. <br>
+          These typically control the colour of the figure background, the presence (or absence of a grid), and for the style 'ticks', the presence of ticks on both axes.</p>
         <select id="style-select">
           <option value="ticks">Ticks</option>
           <option value="white">White</option>
@@ -57,6 +58,10 @@
         </select>
         <h3>Select colour palette</h3>
         <p>Only colourblind-friendly palettes are offered here</p>
+        <div id="palette-preview-container" style="display: none; margin-top: 10px;">
+          <strong>Palette Preview:</strong><br>
+          <img id="palette-preview" alt="Palette preview" style="max-width: 300px;">
+          </div>
         <select id="palette-select">
           <option value="viridis">Viridis</option>
           <option value="magma">Magma</option>
@@ -82,18 +87,25 @@
             {% for arg in config.args %}
               <label for="{{ key }}-{{ arg.name }}">{{ arg.label }}:</label>
               {% if arg.type == "column" %}
-                <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" class="column-select" onchange="generatePlotPreview()">
+                <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" class="column-select" data-type="column" onchange="generatePlotPreview()">
                   <option value="">Select column</option>
                 </select>
               {% elif arg.type == "boolean" %}
-                <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" onchange="generatePlotPreview()">
+                <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" data-type="boolean" onchange="generatePlotPreview()">
                   <option value="true" {% if arg.default == 'true' %}selected{% endif %}>True</option>
                   <option value="false" {% if arg.default == 'false' %}selected{% endif %}>False</option>
                 </select>
+              {% elif arg.type == "literal" %}
+                <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" data-type="literal" onchange="generatePlotPreview()">
+                  {% for option in arg.options %}
+                    <option value="{{ option }}" {% if arg.default == option %}selected{% endif %}>{{ option }}</option>
+                  {% endfor %}
+                </select>  
               {% else %}
                 <input id="{{ key }}-{{ arg.name }}"
-                      type="{{ arg.type }}"
+                      type="{{ 'number' if arg.type == 'number' else 'text' }}"
                       name="{{ arg.name }}"
+                      data-type="{{ arg.type }}"
                       {% if arg.default is defined %}value="{{ arg.default }}"{% endif %}
                       {% if arg.min %}min="{{ arg.min }}"{% endif %}
                       {% if arg.max %}max="{{ arg.max }}"{% endif %}
@@ -110,18 +122,29 @@
                 {% for arg in config.advanced %}
                   <label for="{{ key }}-{{ arg.name }}">{{ arg.label }}:</label>
                   {% if arg.type == "column" %}
-                    <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" class="column-select" onchange="generatePlotPreview()">
-                      <option value="">Select column</option>
+                    <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" class="column-select" data-type="column" onchange="generatePlotPreview()">
                     </select>
                   {% elif arg.type == "Boolean" %}
-                    <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" onchange="generatePlotPreview()">
+                    <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" data-type="boolean" onchange="generatePlotPreview()">
                       <option value="true" {% if arg.default == 'true' %}selected{% endif %}>True</option>
                       <option value="false" {% if arg.default == 'false' %}selected{% endif %}>False</option>
                     </select>
+                  {% elif arg.type == "literal" %}
+                    <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" data-type="literal" onchange="generatePlotPreview()">
+                      {% for option in arg.options %}
+                        <option value="{{ option }}" {% if arg.default == option %}selected{% endif %}>{{ option }}</option>
+                      {% endfor %}
+                    </select>  
                   {% else %}
                     <input id="{{ key }}-{{ arg.name }}"
-                          type="{{ arg.type }}"
-                          name="{{ arg.name }}" onchange="generatePlotPreview()">
+                      type="{{ 'number' if arg.type == 'number' else 'text' }}"
+                      name="{{ arg.name }}"
+                      data-type="{{ arg.type }}"
+                      {% if arg.default is defined %}value="{{ arg.default }}"{% endif %}
+                      {% if arg.min %}min="{{ arg.min }}"{% endif %}
+                      {% if arg.max %}max="{{ arg.max }}"{% endif %}
+                      {% if arg.step %}step="{{ arg.step }}"{% endif %}
+                      onchange="generatePlotPreview()">
                   {% endif %}
                   <br>
                 {% endfor %}
@@ -138,23 +161,30 @@
       <div class="form-step" id="step-5" style="display: none;">
         <h2>Step 5: Add Labels</h2>
         <label for="x-axis_label">x-axis Label:</label>
-          <input type="text" input name="x-axis_label" required><br>
+          <input type="text" id="x-axis_label" required><br>
         <label for="y-axis_label">y-axis Label:</label>
-          <input type="text" input name="y-axis_label"><br>
+          <input type="text" id="y-axis_label"><br>
         <label for="figure_title">Figure Title:</label>
-          <input type="text" input name="y-axis_label"><br>
+          <input type="text" id="figure-title"><br>
         <label for="x-axis_min">X-axis Minimum:</label>
-          <input type="number" input name="x-axis_min"><br>
+          <input type="number" id="x-axis_min"><br>
         <label for="x-axis_max">X-axis Maximum:</label>
-          <input type="number" input name="x-axis_max"><br>
+          <input type="number" id="x-axis_max"><br>
         <label for="y-axis_min">Y-axis Minimum:</label>
-          <input type="number" input name="x-axis_min"><br>
+          <input type="number" id="y-axis_min"><br>
         <label for="y-axis_max">Y-axis Maximum:</label>
-          <input type="number" input name="x-axis_max"><br>
+          <input type="number" id="y-axis_max"><br>
 
-        <button onclick="prevStep(5)">Back</button>
-        <!--<button>Export Code</button>
-        <button id="restart-button">Clear data and Reset</button>-->
+        <button onclick="prevStep(5)">Back</button> <br>
+        <button onclick="generatePlotPreview()">Update Plot</button> <br>
+        <button onclick="nextStep(5)">Next</button> <br>
+      </div>
+      <div class="form-step" id="step-6" style="display: none;">
+        <h2>Step 6: Export Data</h2>
+        <button onclick="prevStep(6)">Back</button>
+        <button onclick="generatePlotPreview()">Update Plot</button>
+        <button>Export Code</button>
+        <button id="restart-button">Clear data and Reset</button>
       </div>
     </div>
   

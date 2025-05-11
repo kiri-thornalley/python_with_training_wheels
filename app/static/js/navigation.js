@@ -4,6 +4,13 @@ const userSelections = {
     plotContext: null,
     plotStyle: null,
     plotPalette: null,
+    xAxisLabel: null,
+    yAxisLabel: null,
+    figureTitle: null,
+    xAxisMin: null,
+    xAxisMax: null,
+    yAxisMin: null,
+    yAxisMax: null,
     plotArgs: {},
   };
   function populateColumnSelects(columns) {
@@ -24,28 +31,48 @@ const userSelections = {
       });
     });
   }
+
   function nextStep(currentStep) {
     document.getElementById(`step-${currentStep}`).style.display = 'none';
     document.getElementById(`step-${currentStep + 1}`).style.display = 'block';
-    
-    // Save selection from step
+
+    // Save selection from current step
     if (currentStep === 1) {
       userSelections.environment = document.getElementById('env-select').value;
-     } else if (currentStep === 3) {
-        userSelections.plotContext = document.getElementById('context-select').value;
-        userSelections.plotStyle = document.getElementById('style-select').value;
-        userSelections.plotPalette = document.getElementById('palette-select').value;
-     } else if (currentStep === 4) {
-        userSelections.plotType = document.getElementById('plot-select').value;
-        userSelections.x = document.getElementById('bar-X-axis').value;
-        userSelections.y = document.getElementById('y-column-select').value;
-        if (window.uploadedColumns) {
-          populateColumnSelects(window.uploadedColumns);
-        }
-        generatePlotPreview(); updatePlotPreview();}
 
-     updateCodePreview();
+    } else if (currentStep === 3) {
+      userSelections.plotContext = document.getElementById('context-select').value;
+      userSelections.plotStyle = document.getElementById('style-select').value;
+      userSelections.plotPalette = document.getElementById('palette-select').value;
+
+    } else if (currentStep === 4) {
+      userSelections.plotType = document.getElementById('plot-select').value;
+      userSelections.plotArgs = collectPlotArgs(); // <-- collect args once, only here
+
+    } else if (currentStep === 5) {
+      userSelections.figureTitle = document.getElementById('figure-title').value;
+      userSelections.xAxisLabel = document.getElementById('x-axis_label').value;
+      userSelections.yAxisLabel = document.getElementById('y-axis_label').value;
+ 
+      const parseOrNull = id => {
+        const val = document.getElementById(id).value;
+        return val === "" ? null : parseFloat(val);
+      };
+
+      userSelections.xAxisMin = parseOrNull('x-axis_min');
+      userSelections.xAxisMax = parseOrNull('x-axis_max');
+      userSelections.yAxisMin = parseOrNull('y-axis_min');
+      userSelections.yAxisMax = parseOrNull('y-axis_max');
+    }
+
+    if (window.uploadedColumns) {
+      populateColumnSelects(window.uploadedColumns);
+    }
+
+    generatePlotPreview();  // Now safe to call here
+    updateCodePreview();
   }
+
   // enable next button to only appear in data upload step, if file successfully uploaded
   function enableNextStep() {
     document.querySelector('#step-2 button[onclick="nextStep(2)"]').disabled = false;
@@ -53,11 +80,29 @@ const userSelections = {
   function prevStep(currentStep) {
     document.getElementById(`step-${currentStep}`).style.display = 'none';
     document.getElementById(`step-${currentStep - 1}`).style.display = 'block';
-  
-    // Clear the current selection when stepping back
+
     if (currentStep === 5) {
+      const plotType = userSelections.plotType;  // Save before wiping
+      const plotArgsBlock = document.querySelector(`#args-${plotType}`);
+      if (plotArgsBlock) {
+        const inputs = plotArgsBlock.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => input.value = '');
+      }
+
+      userSelections.plotArgs = {};
       userSelections.plotType = null;
-      userSelections.plotArgs = null;
+
+      generatePlotPreview();
+    }
+
+    if (currentStep === 5) {
+      userSelections.xAxisLabel = null;
+      userSelections.yAxisLabel = null;
+      userSelections.figureTitle = null;
+      userSelections.xAxisMin = null;
+      userSelections.xAxisMax = null;
+      userSelections.yAxisMin = null;
+      userSelections.yAxisMax = null;
     } else if (currentStep === 4) {
       userSelections.plotContext = null;
       userSelections.plotStyle = null;
@@ -67,7 +112,7 @@ const userSelections = {
     } else if (currentStep === 2) {
       userSelections.environment = null;
     }
-  
+
     updateCodePreview();
   }
 
@@ -116,75 +161,73 @@ const userSelections = {
       } else if (userSelections.plotType === "density") {
         code += "";
       } else if (userSelections.plotType === "histogram") {
-        code += "";
+        code += "Plot tHis if Histogram";
       } else if (userSelections.plotType === "violin") {
-        code += "";
+        code += `# Plot Violin Plot\nsns.violinplot(data=df,)\nsns.despine(offset=10, trim=True)`;
       }
   
     document.getElementById("code-preview").textContent = code.trim();
   }
     // Send selections to Flask to generate plot
     function generatePlotPreview() {
-    const plotType = userSelections.plotType;
-    if (!plotType) return;
+      const plotType = userSelections.plotType;
+      if (!plotType) return;
 
-    // Collect dynamic plotArgs based on visible inputs
-    const argsDiv = document.getElementById(`args-${plotType}`);
-    const inputs = argsDiv.querySelectorAll("select, input");
-
-    const plotArgs = {};
-    inputs.forEach(input => {
-      const name = input.name;
-      const value = input.value;
-      if (value !== "") {
-        plotArgs[name] = value;
-      }
-    });
-
-    userSelections.plotArgs = plotArgs;
-
-    fetch("/generate_plot", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        plotType: plotType,
-        context: userSelections.plotContext,
-        style: userSelections.plotStyle,
-        palette: userSelections.plotPalette,
-        plotArgs: plotArgs
+      fetch("/generate_plot", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          plotType: plotType,
+          context: userSelections.plotContext,
+          style: userSelections.plotStyle,
+          palette: userSelections.plotPalette,
+          plotArgs: userSelections.plotArgs, // Already up to date
+          xAxisLabel: userSelections.xAxisLabel,
+          yAxisLabel: userSelections.yAxisLabel,
+          figureTitle: userSelections.figureTitle,
+          xAxisMin: userSelections.xAxisMin,
+          xAxisMax: userSelections.xAxisMax,
+          yAxisMin: userSelections.yAxisMin,
+          yAxisMax: userSelections.yAxisMax,
+        })
       })
-    })
-      .then(res => res.blob())
-      .then(imageBlob => {
-        const imageURL = URL.createObjectURL(imageBlob);
-        document.getElementById("plot-preview").src = imageURL;
-        document.getElementById('plot-preview-container').style.display = 'block';
-      })
-      .catch(err => console.error("Plot generation failed:", err));
-  }
-
+        .then(res => res.blob())
+        .then(imageBlob => {
+          const imageURL = URL.createObjectURL(imageBlob);
+          document.getElementById("plot-preview").src = imageURL;
+          document.getElementById('plot-preview-container').style.display = 'block';
+        })
+        .catch(err => console.error("Plot generation failed:", err));
+    }
   function onPlotTypeChange() {
     const selected = document.getElementById("plot-select").value;
     const allArgBlocks = document.querySelectorAll(".plot-args");
-    
-    // Hide all argument blocks
+
+    // Hide all plot argument blocks
     allArgBlocks.forEach(div => div.style.display = "none");
-    
-    // Show the relevant block
+
+    // Show the selected plot type's arguments block
     if (selected) {
       const target = document.getElementById(`args-${selected}`);
-      if (target) target.style.display = "block";
-      
-      // Store the selection and generate preview immediately
-      userSelections.plotType = selected;
-      generatePlotPreview();
-    }
-    
-    updatePlotPreview();
-  }
+      if (target) {
+        target.style.display = "block";
 
+        // Add event listeners for plot arguments to trigger preview update
+        const inputs = target.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+          input.addEventListener('input', () => {
+            userSelections.plotArgs = collectPlotArgs(); // Collect new plot args
+            generatePlotPreview(); // Immediately regenerate plot preview
+          });
+        });
+      }
+
+      // Store the selected plot type in the user selection
+      userSelections.plotType = selected;
+      userSelections.plotArgs = collectPlotArgs(); // Initialize plot args
+      generatePlotPreview(); // Initial preview update when a plot type is selected
+    }
+  }
   function updatePlotPreview() {
     // Show the plot preview only after plot type has been selected
     const plotType = document.getElementById('plot-select').value;
@@ -196,6 +239,34 @@ const userSelections = {
       // Hide the plot preview container if no plot type is selected
       document.getElementById('plot-preview-container').style.display = 'none';
     }
+  }
+
+  function collectPlotArgs() {
+    const plotType = userSelections.plotType;
+    const plotArgsBlock = document.querySelector(`#args-${plotType}`);
+    if (!plotArgsBlock) return;
+
+    const inputs = plotArgsBlock.querySelectorAll('input, select, textarea');
+    const args = {};
+
+    inputs.forEach(input => {
+      const name = input.name;
+      const value = input.value;
+      const type = input.dataset.type;
+
+      if (value === "") return;
+
+      switch (type) {
+        case "number":
+          const num = parseFloat(value);
+          if (!isNaN(num)) args[name] = num;
+          break;
+        default:
+          args[name] = value;
+      }
+    });
+
+    return args;
   }
   
  // AJAX for csv upload
@@ -220,13 +291,13 @@ const userSelections = {
         if (data.success) {
           uploadStatus.textContent = 'CSV uploaded successfully!';
 
-          // 🔥 Save the filename for code preview use
+          // Save the filename for code preview use
           userSelections.dataFrame = data.original_filename;
           console.log("Uploaded file name:", data.file_name);
           console.log("Detected columns:", data.columns);
           window.uploadedColumns = data.columns; // so we can reuse them later
           populateColumnSelects(data.columns);   // call right after successful upload
-          // ✅ Enable Next Step button
+          // Enable Next Step button
           enableNextStep();
           } else {
           uploadStatus.textContent = 'Upload failed: ' + (data.error || 'Unknown error');

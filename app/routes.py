@@ -50,61 +50,61 @@ def home():
         "args": [
             {"name": "x", "label": "X-Axis", "type": "column"},
             {"name": "y", "label": "Y-Axis", "type": "column"},
-           #{"name": "width", "label": "Bar Width", "type": "number", "default": 1},
-            {"name": "bottom", "label": "Bottom", "type": "text"},
-            {"name": "align", "label": "Bar Alignment", "type": "text"}, # 'center', 'edge'}, default: 'center'
-            {"name": "color", "label": "Bar Color", "type": "text"} # call from preset palette
+            {"name": "width", "label": "Bar Width", "type": "number", "default": 0.8},
+            #{"name": "bottom", "label": "Bottom", "type": "text"},
+            {"name": "align", "label": "Bar Alignment", "type": "literal", "options":['center', 'edge'], "default": "center"},
+            #{"name": "color", "label": "Bar Color", "type": "text"} sns.color_palette("viridis")[3]
         ],
-        "advanced": [
-            {"name": "yerr", "label": "Y-Error", "type": "column"},
-            {"name": "ecolor", "label": "Error Bar Color", "type": "text"}, # call from preset palette
+        #"advanced": [
+            #{"name": "yerr", "label": "Y-Error", "type": "column"},
+            #{"name": "ecolor", "label": "Error Bar Color", "type": "text"}, # call from preset palette
             #{"name":"log", "label":"Log Scale - Y-axis", "type":"Boolean", "default": 'false'}
+        #]
+    },
+    "box": { 
+        "label": "Box Plot", # plotted from the seaborn function, the Matplotlib one is so complex, its confusing.
+        "args": [
+            {"name": "x", "label": "X-Axis", "type": "column"},
+            {"name": "y", "label": "Y-Axis", "type": "column"},
+            {"name": "hue", "label": "Hue", "type": "column"},
+            {"name": "orient", "label": "Orientation", "type": "literal", "options":['horizontal', 'vertical'], "default": "vertical"},
+            {"name": "saturation", "label": "Colour Saturation", "type": "number", "min": 0, "max": 1, "step": 0.1, "default": 0.75},           
+            {"name": "widths", "label": "Bar Width", "type": "number"},
+
+        ],
+        #"advanced": [
+            #{"name": "order", "label": "Plor Order", "type": "text"},
+            #{"name": "hue order", "label": "Hue Order", "type": "text"},
+            #{"name": "color", "label": "Bar Color", "type": "text"},
+            #{"name": "fill", "label": "Bar Fill", "type": "Boolean", "default": True},
+        #]
+    },
+    "bubble": {
+        "label": "Bubble Chart",
+        "args": [
+            {"name": "x", "label": "X-Axis", "type": "column"},
+            {"name": "y", "label": "Y-Axis", "type": "column"},
+            {"name": "s", "label": "Bubble Size", "type": "column"},
         ]
     },
-    #"box": {
-        #"label": "Box Plot",
-        #"args": [
-            #{"name": "x", "label": "X-Axis", "type": "column"},
-            #{"name": "sym", "label": "Symbol for Outliers", "type": "text"},
-            #{"name": "orientation", "label": "Orientation", "type": "text"},            
-            #{"name": "widths", "label": "Bar Width", "type": "text"} 
-        #],
-        #"advanced": [
-            #{"name": "whis", "label": "Bar Color", "type": "text"},
-            #{"name": "showcaps", "label": "Caps on whiskers?", "type": "Boolean"},
-            #{"name": "showbox", "label": "showbox", "type": "Boolean"},
-            #{"name": "showfliers", "label": "showfliers", "type": "Boolean"},
-            #{"name": "showmeans", "label": "showmeans", "type": "Boolean"}
-        #]
-    #},
-    #"bubble": {
-        #"label": "Bubble Chart",
-        #"args": [
-            #{"name": "x", "label": "X-Axis", "type": "column"},
-            #{"name": "y", "label": "Y-Axis", "type": "column"},
-            #{"name": "size", "label": "Bubble Size", "type": "column"},
-            #{"name": "width", "label": "Bar Width", "type": "text"},
-            #{"name": "color", "label": "Bar Color", "type": "text"}
-        #]
-    #},
     #"heat": {
         #"label": "Heatmap",
         #"args": [
-            #{"name": "annot", "label": "Annotations?", "type": "Boolean", "default": 'false'},
+            #{"name": "annot", "label": "Annotations", "type": "Boolean", "default": 'false'},
             #{"name": "vmin", "label": "Bar Width", "type": "number"},
             #{"name": "vmax", "label": "Bar Width", "type": "number"},
             #{"name": "color", "label": "Bar Color", "type": "text"}
         #]
     #},
-    "line": {
-        "label": "Line Chart",
-        "args": [
-            {"name": "x", "label": "X-Axis", "type": "column"},
-            {"name": "y", "label": "Y-Axis", "type": "column"},
-            {"name": "width", "label": "Bar Width", "type": "number"},
+    #"line": {
+        #"label": "Line Chart",
+        #"args": [
+            #{"name": "x", "label": "X-Axis", "type": "column"},
+           # {"name": "y", "label": "Y-Axis", "type": "column"},
+            #{"name": "width", "label": "Bar Width", "type": "number"},
             #{"name": "color", "label": "Bar Color", "type": "text"}
-        ]
-    },
+        #]
+    #},
     #"density": {
         #"label": "Density Plot",
         #"args": [
@@ -114,34 +114,50 @@ def home():
             #{"name": "color", "label": "Bar Color", "type": "text"}
         #]
     #},
-    #"histogram": {
-        #"label": "Histogram",
-        #"args": [
-            #{"name": "x", "label": "X-Axis", "type": "text"},
-            #{"name": "y", "label": "Y-Axis", "type": "text"},
-            #{"name": "width", "label": "Bar Width", "type": "text"},
-            #{"name": "color", "label": "Bar Color", "type": "text"}
+    # All params added 10/05/2025
+    "histogram": {
+        "label": "Histogram",
+        "args": [
+            {"name": "x", "label": "X-Axis", "type": "column"},
+            {"name": "bins", "label": "Bin Count", "type": "number"},
+            {"name": "align", "label": "Bar Alignment", "type": "literal", "options": ["left", "mid", "right"], "default": 'mid'}, # Literal| 'left', 'mid', 'right'
+            {"name": "orientation", "label": "Chart Orientation", "type": "literal", "options": ["vertical", "horizontal"], "default":'vertical'}, # Literal| 'horiontal', 'vertical'
+            #{"name": "log", "label":"Log Scale - Y-axis", "type":"Boolean", "default": False},
+            #{"name": "color", "label": "Bar Color", "type": "text"} # sns.color_palette("viridis")[3]
+       ]
+       # "advanced": [
+            #{"name": "range", "label": "Range", "type": "tuple"},
+            #{"name": "density", "label": "Density", "type": "Boolean", "default": "False"},
+            #{"name": "weights", "label":"Weights", "type": "Array", "default": 'None'},
+            #{"name": "cumulative", "label":"Cumulative Histogram", "type": "Boolean", "default": 'False'},
+            #{"name": "bottom", "label":"Bottom", "type":"Array", "default": 'None'},
+            #{"name": "histtype", "label":"Histogram Style", "type": "literal", "options": ["bar", "barstacked", "step", "stepfilled"], "default": 'bar'}, # Literal| 'bar', 'barstacked', 'step', 'stepfilled'
+            #{"name": "label", "label":"Bar Label", "type":"text"},
+            #{"name": "rwidth", "label":"rwidth", "type":"number", default:""}, #What is this?
+            #{"name": "stacked", "label":"Stacked Bars", "type":"Boolean", "default":'False'},
         #]
-    #},
-    #"violin": {
-        #"label": "Violin Plot",
-        #"args": [
-            #{"name": "x", "label": "X-Axis", "type": "text"},
-            #{"name": "y", "label": "Y-Axis", "type": "text"},
-            #{"name": "width", "label": "Bar Width", "type": "text"},
-            #{"name": "color", "label": "Bar Color", "type": "text"}
-        #]
-    #},
-    "scatter": {
-        "label": "Scatter Plot",
+    },
+    "violin": {
+        "label": "Violin Plot",
         "args": [
             {"name": "x", "label": "X-Axis", "type": "column"},
             {"name": "y", "label": "Y-Axis", "type": "column"},
-            #{"name": "alpha", "label": "Alpha", "type": "number", "min": 0, "max": 1, "step": 0.1}
+            {"name": "hue", "label": "hue", "type": "column"},
+            #{"name": "width", "label": "Bar Width", "type": "text"},
+            #{"name": "color", "label": "Bar Color", "type": "text"}
         ]
+    },
+    #"scatter": {
+        #"label": "Scatter Plot",
+        #"args": [
+           # {"name": "x", "label": "X-Axis", "type": "column"},
+           # {"name": "y", "label": "Y-Axis", "type": "column"},
+        #]
+        #"advanced": [
+            #{"name": "alpha", "label": "Alpha", "type": "number", "min": 0, "max": 1, "step": 0.1},
+        #]
+    #}
     }
-}
-
     return render_template('pages/index.html', plot_types=PLOT_TYPES)  # Render the homepage
 
 @main_routes.route('/generate_plot', methods=['POST'])
@@ -155,6 +171,15 @@ def generate_plot():
     style = data.get('style')
     palette = data.get('palette')
     plot_args = data.get('plotArgs', {})
+
+    # Optional labels and limits
+    x_label = data.get("xAxisLabel")
+    y_label = data.get("yAxisLabel")
+    title = data.get("figureTitle")
+    x_min = data.get("xAxisMin")
+    x_max = data.get("xAxisMax")
+    y_min = data.get("yAxisMin")
+    y_max = data.get("yAxisMax")
 
     # Get CSV path from session
     csv_path = session.get('csv_path')
@@ -170,19 +195,120 @@ def generate_plot():
     fig, ax = plt.subplots()
 
     try:
-        # Pass DataFrame explicitly if needed
         if plot_type == 'bar':
             sns.barplot(data=df, ax=ax, **plot_args)
+            if title:
+                ax.set_title(title)
+            if x_label:
+                ax.set_xlabel(x_label)
+            if y_label:
+                ax.set_ylabel(y_label)
+            if x_min is not None and x_max is not None:
+                ax.set_xlim(x_min, x_max)
+            if y_min is not None and y_max is not None:
+                ax.set_ylim(y_min, y_max)
+        elif plot_type == 'box':
+            ax.boxplot(data=df, **plot_args)
+            if title:
+                ax.set_title(title)
+            if x_label:
+                ax.set_xlabel(x_label)
+            if y_label:
+                ax.set_ylabel(y_label)
+            if x_min is not None and x_max is not None:
+                ax.set_xlim(x_min, x_max)
+            if y_min is not None and y_max is not None:
+                ax.set_ylim(y_min, y_max)
+        elif plot_type == 'bubble':
+            ax.scatter(data=df, **plot_args)
+            if title:
+                ax.set_title(title)
+            if x_label:
+                ax.set_xlabel(x_label)
+            if y_label:
+                ax.set_ylabel(y_label)
+            if x_min is not None and x_max is not None:
+                ax.set_xlim(x_min, x_max)
+            if y_min is not None and y_max is not None:
+                ax.set_ylim(y_min, y_max)
+        elif plot_type == 'density':
+            sns.kdeplot(data=df, ax=ax, **plot_args)
+            if title:
+                ax.set_title(title)
+            if x_label:
+                ax.set_xlabel(x_label)
+            if y_label:
+                ax.set_ylabel(y_label)
+            if x_min is not None and x_max is not None:
+                ax.set_xlim(x_min, x_max)
+            if y_min is not None and y_max is not None:
+                ax.set_ylim(y_min, y_max)
+        elif plot_type == 'histogram':
+            ax.hist(data=df, **plot_args)
+            if title:
+                ax.set_title(title)
+            if x_label:
+                ax.set_xlabel(x_label)
+            if y_label:
+                ax.set_ylabel(y_label)
+            if x_min is not None and x_max is not None:
+                ax.set_xlim(x_min, x_max)
+            if y_min is not None and y_max is not None:
+                ax.set_ylim(y_min, y_max)
         elif plot_type == 'scatter':
-            sns.scatterplot(data=df, ax=ax, **plot_args)
+            ax.scatter(data=df,**plot_args)
+            if title:
+                ax.set_title(title)
+            if x_label:
+                ax.set_xlabel(x_label)
+            if y_label:
+                ax.set_ylabel(y_label)
+            if x_min is not None and x_max is not None:
+                ax.set_xlim(x_min, x_max)
+            if y_min is not None and y_max is not None:
+                ax.set_ylim(y_min, y_max)
         elif plot_type == 'line':
-            sns.lineplot(data=df, ax=ax, **plot_args)
+            ax.plot(data=df, **plot_args)
+            if title:
+                ax.set_title(title)
+            if x_label:
+                ax.set_xlabel(x_label)
+            if y_label:
+                ax.set_ylabel(y_label)
+            if x_min is not None and x_max is not None:
+                ax.set_xlim(x_min, x_max)
+            if y_min is not None and y_max is not None:
+                ax.set_ylim(y_min, y_max)
         elif plot_type == 'heat':
             sns.heatmap(df.corr(), ax=ax)
+            if title:
+                ax.set_title(title)
+            if x_label:
+                ax.set_xlabel(x_label)
+            if y_label:
+                ax.set_ylabel(y_label)
+            if x_min is not None and x_max is not None:
+                ax.set_xlim(x_min, x_max)
+            if y_min is not None and y_max is not None:
+                ax.set_ylim(y_min, y_max)
+        elif plot_type == 'violin':
+            sns.violinplot(data=df, ax=ax, **plot_args)
+            sns.despine(offset=10, trim=True)
+            if title:
+                ax.set_title(title)
+            if x_label:
+                ax.set_xlabel(x_label)
+            if y_label:
+                ax.set_ylabel(y_label)
+            if x_min is not None and x_max is not None:
+                ax.set_xlim(x_min, x_max)
+            if y_min is not None and y_max is not None:
+                ax.set_ylim(y_min, y_max)    
         else:
-            ax.text(0.5, 0.5, f"Plot type '{plot_type}' not implemented", ha='center', va='center')
+            ax.text(0.5, 0.5, f"Plot type '{plot_type}' not yet implemented in Flask Backend", ha='center', va='center')
     except Exception as e:
         ax.text(0.5, 0.5, f"Plot error: {str(e)}", ha='center', va='center')
+
 
     # Convert plot to PNG
     buf = io.BytesIO()
