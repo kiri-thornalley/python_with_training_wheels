@@ -364,3 +364,30 @@ def export_code():
     # If an unsupported file extension is requested, return an error
     else:
         return Response("Unsupported file format", status=400)
+
+@main_routes.route("/palette_preview", methods=["POST"])
+def palette_preview():
+    """Generates palette preview"""
+
+    palette_name = request.json.get("palette")
+    if not palette_name:
+        return "Missing palette", 400
+    matplotlib.use('Agg') 
+    try:
+        colors = sns.color_palette(palette_name)
+        fig, ax = plt.subplots(figsize=(6, 1))
+        for i, color in enumerate(colors):
+            ax.add_patch(plt.Rectangle((i, 0), 0.95, 1.0, color=color))
+        ax.set_xlim(0, len(colors))
+        ax.set_ylim(0, 1)
+        ax.axis("off")
+
+        buf = io.BytesIO()
+        plt.savefig(buf, format="png", bbox_inches="tight", pad_inches=0)
+        plt.close(fig)
+        buf.seek(0)
+        return send_file(buf, mimetype="image/png")
+
+    except Exception as e:
+        print(f"[ERROR] Failed to generate palette preview: {e}")
+    return jsonify({"error": str(e)}), 500
