@@ -3,8 +3,10 @@
     <meta charset="UTF-8">
     <title>Python With Training Wheels</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-okaidia.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesheet.css') }}">
 </head>
+
 <body>
   <div style="display: flex; height: 100vh;">
     <!-- Left: Multi-step form -->
@@ -12,7 +14,8 @@
       <div class="form-step" id="step-1">
         <h2>Step 1: Runtime Environment</h2>
         <p>Where will you be running this code, as this influences export format at the end of this workflow.<br><br>
-          Jupyter Notebook will export as .ipynb, VS Code and Google Colab both export as .py, but Colab has additional import arguments added to the code to import missing packages that do not exist by default e.g., seaborn.
+          Jupyter Notebook and Google Colab will both export as .ipynb,but Colab has additional import arguments added to the code to import missing packages that do not exist by default e.g., seaborn.<br>
+          VS Code will export as .py.
         </p>
         <select id="env-select">
           <option value="jupyter">Jupyter Notebook</option>
@@ -61,10 +64,10 @@
         <h3>Select colour palette</h3>
         <p>Only colourblind-friendly palettes are offered here</p>
 
-        <div id="palette-preview-container" style="display: none; margin-top: 10px;">
-          <strong>Palette Preview:</strong><br>
-          <img id="palette-preview" alt="Palette preview" style="max-width: 300px;">
-          </div>
+          <div id="palette-preview-container" style="display: none; margin-top: 10px;">
+            <strong>Palette Preview:</strong><br>
+            <img id="palette-preview" src="", alt="Palette preview" style="max-width: 300px;">
+            </div>
 
         <select id="palette-select">
           <option value="viridis">Viridis</option>
@@ -190,16 +193,16 @@
         <br>
         <button onclick="exportCode()">Export Code</button><br><br>
         <button onclick="prevStep(6)">Back</button> <br>
-        <button id="restart-button">Clear data and Reset</button>
+        <button id="reset-button">Clear data and Reset</button>
       </div>
     </div>
   
     <!-- Right: Code preview -->
     <div id="code-pane" style="flex: 1; background: #f5f5f5; padding: 20px; overflow-y: auto;">
       <h2>Generated Python Code</h2>
-      <pre id="code-preview" style="white-space: pre-wrap; font-family: monospace;">
+      <pre> <code class="language-python" id="code-preview" style="white-space: pre-wrap; font-family: monospace;">
         # Your generated Python code will appear here
-      </pre>
+      </pre></code>
 
     <!--Figure Preview-->
       <div id="plot-preview-container" style="display: none;">
@@ -209,4 +212,8 @@
       </div>
   </div>
   <script src="{{ url_for('static', filename='js/navigation.js') }}"></script>
+  <!-- Include Prism's JS -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
+  <!-- Add Python support -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-python.min.js"></script>
 </body>

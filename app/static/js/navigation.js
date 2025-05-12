@@ -18,7 +18,7 @@ const userSelections = {
 document.addEventListener("DOMContentLoaded", () => {
   PalettePreview();
   CSVUpload();
-  RestartButton();
+  ResetButton();
 });
 
 //---
@@ -225,43 +225,34 @@ function updateCodePreview() {
   ) {
       code += `# Set Seaborn theme\nsns.set_theme(context='${userSelections.plotContext}', style='${userSelections.plotStyle}', palette='${userSelections.plotPalette}')\n\n`;
   }
+
   // ONLY add plot command if selected
   if (userSelections.plotType === "bar") {
     code += "fig, ax = plt.subplots()\nax.bar";
-    } else if (userSelections.plotType === "box") {
-    code += "";
-    } else if (userSelections.plotType === "bubble") {
-    code += "";
-    } else if (userSelections.plotType === "heat") {
-    code += "";
-    } else if (userSelections.plotType === "line") {
-    code += "";
-    } else if (userSelections.plotType === "scatter") {
-      code += "";
-    } else if (userSelections.plotType === "density") {
-      code += "";
-    } else if (userSelections.plotType === "histogram") {
-      //code += `# Plot Histogram\n fig,ax = plt.subplots()\n ax.hist(data=df, '${plot.args}')`;
-    } else if (userSelections.plotType === "violin") {
-      if (userSelections.plotArgs) {
-        code += `# Plot Violin Plot\nsns.violinplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.y}', data=df)\n`;
-      }
-        code += 'sns.despine(offset=10, trim=True)\n\n';
-    };
-  if (userSelections.figureTitle){
-    code += `# Plot Figure Title\nax.set_title('${userSelections.figureTitle}')\n\n`
+  } else if (userSelections.plotType === "violin") {
+    if (userSelections.plotArgs) {
+      code += `# Plot Violin Plot\nsns.violinplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.y}', data=df)\n`;
+    }
+    code += 'sns.despine(offset=10, trim=True)\n\n';
   }
-  if (userSelections.xAxisLabel){
-    code += `# Set Axis Labels\nax.set_xlabel('${userSelections.xAxisLabel}')\n`
+
+  if (userSelections.figureTitle) {
+    code += `# Plot Figure Title\nax.set_title('${userSelections.figureTitle}')\n\n`;
   }
-  if (userSelections.yAxisLabel){
-    code += `ax.set_ylabel('${userSelections.yAxisLabel}')\n\n`
+
+  if (userSelections.xAxisLabel) {
+    code += `# Set Axis Labels\nax.set_xlabel('${userSelections.xAxisLabel}')\n`;
   }
-  //if x_min is not None and x_max is not None:
-      //ax.set_xlim(x_min, x_max)
-  //if y_min is not None and y_max is not None:
-      //ax.set_ylim(y_min, y_max)  
-  document.getElementById("code-preview").textContent = code.trim();
+
+  if (userSelections.yAxisLabel) {
+    code += `ax.set_ylabel('${userSelections.yAxisLabel}')\n\n`;
+  }
+
+  // Update the code preview content with the generated code
+  const codePreviewElement = document.getElementById("code-preview");
+  codePreviewElement.textContent = code.trim();
+  // call Prism to highlight code despite all the AJAX nonsense we have going on
+  Prism.highlightElement(codePreviewElement);
 }
 
 //---
@@ -440,7 +431,7 @@ function collectPlotArgs() {
 
 // Reset Button to clear session and delete uploaded files in Step 6
 function ResetButton() {
-  document.getElementById("restart-button").addEventListener("click", () => {
+  document.getElementById("reset-button").addEventListener("click", () => {
     fetch("/reset_session")
       .then(response => {
         if (response.ok) {
@@ -454,4 +445,3 @@ function ResetButton() {
       });
   });
 }
-
