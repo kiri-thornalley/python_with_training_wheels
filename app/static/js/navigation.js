@@ -266,6 +266,7 @@ const userSelections = {
       generatePlotPreview(); // Initial preview update when a plot type is selected
     }
   }
+  // Show/Hide plot preview container on selection of plot type
   function updatePlotPreview() {
     // Show the plot preview only after plot type has been selected
     const plotType = document.getElementById('plot-select').value;
@@ -341,12 +342,12 @@ const userSelections = {
           uploadStatus.textContent = 'Upload failed: ' + (data.error || 'Unknown error');
         }
       })
-
+  
+  // Makes Reset button in Step 6 work
   document.getElementById("restart-button").addEventListener("click", function () {
   fetch("/reset_session")
     .then(response => {
       if (response.ok) {
-        // Optionally reload the page or reset UI state
         location.reload(); // Reloads the page to start fresh
       } else {
         alert("Failed to reset session.");
@@ -357,7 +358,7 @@ const userSelections = {
     });
 });
 })
-
+// Export code to .ipynb or .py - Step 6
 function exportCode() {
   // Get the environment selected in Step 1
   const envSelect = document.getElementById("env-select");
@@ -367,7 +368,7 @@ function exportCode() {
   const code = document.getElementById("code-preview").textContent;
 
   // Determine the file extension based on the selected environment
-  let fileExtension = selectedEnv === "jupyter" ? ".ipynb" : ".py";
+  let fileExtension = selectedEnv === "vscode" ? ".py" : ".ipynb";
   let filename = "generated_code" + fileExtension;
 
   // Prepare the data to send to the backend
