@@ -19,12 +19,12 @@ This project is for educators, students, analysts, and anyone who wants to learn
 Further, this tool has been built with the accessibility of the outputted figures in mind - when asked to select a colour palette for the figures, only colour-blind friendly options *e.g.,* viridis are presented to the user. 
 
 ### Features
-- **Upload your CSV data** (stored only in memory, not saved to disk)
+- **Upload your CSV data** (stored to disk for up to 15 minutes, before automatic deletion)
 - **Auto-populated dropdowns** based on your data columns
-- **Choose plot types, themes, and palettes** via dropdowns
+- **Choose plot types, themes, and palettes** via dropdowns - **VERSION 1.0:** Very limited plot types/ modifiable params currently available
 - **Live-updating code preview** showing exactly what’s being built
 - **Preview your plot** as you configure it
-- **Export-ready code** for use in Google Colab, VS Code, or Jupyter notebooks.
+- **Export-ready code** for use in Google Colab, VS Code, or Jupyter notebooks
 
 ## Installation
 ### Prerequisites
@@ -45,7 +45,8 @@ Then open http://localhost:5000 in your browser.
 
 ## Development Roadmap
 ### Version 1.1
- - Further plot types available (e.g., Network graph, Heatmap, Violin Plot)
+ - Further plot types available (e.g., Network graph, Heatmap, Box and Whisker Plot)
+ - Implement highlight.js to modify appearance of generated code
  - Support for .xlsx upload
 ### Version 2.0
 #### Basic Exploratory Data Analysis
