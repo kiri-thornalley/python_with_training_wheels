@@ -7,10 +7,10 @@ const userSelections = {
     xAxisLabel: null,
     yAxisLabel: null,
     figureTitle: null,
-    xAxisMin: null,
+    xAxisMin: 0,
     xAxisMax: null,
     yAxisMin: null,
-    yAxisMax: null,
+    yAxisMax: 0,
 
     plotArgs: {},
   };
@@ -50,10 +50,28 @@ const userSelections = {
       userSelections.plotArgs = collectPlotArgs(); // <-- collect args once, only here
 
     } else if (currentStep === 5) {
+      // Save inputs the first time (in case user skips to next step quickly)
       userSelections.figureTitle = document.getElementById('figure-title').value;
       userSelections.xAxisLabel = document.getElementById('x-axis_label').value;
       userSelections.yAxisLabel = document.getElementById('y-axis_label').value;
- 
+
+      const parseOrNull = id => {
+        const val = document.getElementById(id).value;
+        return val === "" ? null : parseFloat(val);
+      };
+
+      userSelections.xAxisMin = parseOrNull('x-axis_min');
+      userSelections.xAxisMax = parseOrNull('x-axis_max');
+      userSelections.yAxisMin = parseOrNull('y-axis_min');
+      userSelections.yAxisMax = parseOrNull('y-axis_max');
+    }
+
+    // Always re-read Step 5 inputs if just left Step 5 (to keep previews accurate)
+    if (currentStep === 5) {
+      userSelections.figureTitle = document.getElementById('figure-title').value;
+      userSelections.xAxisLabel = document.getElementById('x-axis_label').value;
+      userSelections.yAxisLabel = document.getElementById('y-axis_label').value;
+
       const parseOrNull = id => {
         const val = document.getElementById(id).value;
         return val === "" ? null : parseFloat(val);
@@ -69,8 +87,8 @@ const userSelections = {
       populateColumnSelects(window.uploadedColumns);
     }
 
-    generatePlotPreview();  // Now safe to call here
-    updateCodePreview();
+    generatePlotPreview();
+    updateCodePreview();     
   }
 
   // enable next button to only appear in data upload step, if file successfully uploaded
@@ -144,7 +162,7 @@ const userSelections = {
       userSelections.plotStyle &&
       userSelections.plotPalette
     ) {
-        code += `# Set Seaborn theme\nsns.set_theme(context='${userSelections.plotContext}', style='${userSelections.plotStyle}', palette='${userSelections.plotPalette}')\n\n`;;
+        code += `# Set Seaborn theme\nsns.set_theme(context='${userSelections.plotContext}', style='${userSelections.plotStyle}', palette='${userSelections.plotPalette}')\n\n`;
     }
     // ONLY add plot command if selected
     if (userSelections.plotType === "bar") {
@@ -165,11 +183,23 @@ const userSelections = {
         //code += `# Plot Histogram\n fig,ax = plt.subplots()\n ax.hist(data=df, '${plot.args}')`;
       } else if (userSelections.plotType === "violin") {
         if (userSelections.plotArgs) {
-          code += `# Plot Violin Plot\nsns.violinplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', data=df)\n`;
+          code += `# Plot Violin Plot\nsns.violinplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.y}', data=df)\n`;
         }
-          code += 'sns.despine(offset=10, trim=True)\n';
+          code += 'sns.despine(offset=10, trim=True)\n\n';
       };
-  
+    if (userSelections.figureTitle){
+      code += `# Plot Figure Title\nax.set_title('${userSelections.figureTitle}')\n\n`
+    }
+    if (userSelections.xAxisLabel){
+      code += `# Set Axis Labels\nax.set_xlabel('${userSelections.xAxisLabel}')\n`
+    }
+    if (userSelections.yAxisLabel){
+      code += `ax.set_ylabel('${userSelections.yAxisLabel}')\n\n`
+    }
+    //if x_min is not None and x_max is not None:
+        //ax.set_xlim(x_min, x_max)
+    //if y_min is not None and y_max is not None:
+        //ax.set_ylim(y_min, y_max)  
     document.getElementById("code-preview").textContent = code.trim();
   }
     // Send selections to Flask to generate plot

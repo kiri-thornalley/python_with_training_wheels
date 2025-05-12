@@ -11,8 +11,11 @@
     <div id="form-pane" style="flex: 1; padding: 20px;">
       <div class="form-step" id="step-1">
         <h2>Step 1: Runtime Environment</h2>
+        <p>Where will you be running this code, as this influences export format at the end of this workflow.<br><br>
+          Jupyter Notebook will export as .ipynb, VS Code and Google Colab both export as .py, but Colab has additional import arguments added to the code to import missing packages that do not exist by default e.g., seaborn.
+        </p>
         <select id="env-select">
-          <option value="jupyter">Jupyter</option>
+          <option value="jupyter">Jupyter Notebook</option>
           <option value="vscode">VS Code</option>
           <option value="colab">Google Colab</option>
         </select>
@@ -21,8 +24,7 @@
 
       <div class="form-step" id="step-2" style="display: none;">
         <h2>Step 2: Import data</h2>
-        <p>
-          Note: This app currently only accepts .csv files, and doesn't permanently store your file. It's loaded in memory for this session only.
+        <p> Note: This app currently only accepts .csv files, and doesn't permanently store your file. It's loaded for this session only.
           Be sure to export your code to Colab, VS Code, or commit to GitHub when you're done.
         </p>
         <form id="upload-form" enctype="multipart/form-data">
@@ -168,11 +170,11 @@
           <input type="text" id="y-axis_label"><br>
         <label for="figure_title">Figure Title:</label>
           <input type="text" id="figure-title"><br>
-       <!--<label for="x-axis_min">X-axis Minimum:</label>
-          <input type="number" id="x-axis_min"><br>
+       <label for="x-axis_min">X-axis Minimum:</label>
+          <input type="number" id="x-axis_min" default=0><br>
         <label for="x-axis_max">X-axis Maximum:</label>
           <input type="number" id="x-axis_max"><br>
-        <label for="y-axis_min">Y-axis Minimum:</label>
+        <!--<label for="y-axis_min">Y-axis Minimum:</label>
           <input type="number" id="y-axis_min"><br>
         <label for="y-axis_max">Y-axis Maximum:</label>
           <input type="number" id="y-axis_max"><br>-->
@@ -183,8 +185,11 @@
       </div>
       <div class="form-step" id="step-6" style="display: none;">
         <h2>Step 6: Export Data</h2>
-        <button onclick="prevStep(6)">Back</button>
-        <button onclick="exportCode()">Export Code</button>
+        <p>Finally, your code is ready! Click export code to generate the .ipynb or .py file.<br>
+        Remember, this app does not store your data long term, you must export your code to more long term storage.</p>
+        <br>
+        <button onclick="exportCode()">Export Code</button><br><br>
+        <button onclick="prevStep(6)">Back</button> <br>
         <button id="restart-button">Clear data and Reset</button>
       </div>
     </div>

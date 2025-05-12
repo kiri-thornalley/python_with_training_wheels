@@ -1,13 +1,12 @@
-# Add new routes (i.e., pages) to the Flask app in here. 
+import io
+import uuid
+import os
+import shutil
 from flask import Blueprint, request,jsonify, render_template, session, send_file, abort, Response
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns
-import io
-import uuid
-import os
-import shutil
 from werkzeug.utils import secure_filename
 import nbformat
 
@@ -43,66 +42,66 @@ def upload_csv():
 @main_routes.route('/home')
 # Plot types introduced here, we typically pull the args from the function for said plotype included in matplotlib,
 # as these give more granular control over the exact final appearance of the figure.
-# The exception to this is the density plot. **TODO: Which plots call sns.plot instead of plt?**
+# **TODO: Which plots call sns.plot instead of plt?**
 def home():
+    """Main Flask route"""
     PLOT_TYPES = {
-    "bar": {
-        "label": "Bar Chart",
-        "args": [
-            {"name": "x", "label": "X-Axis", "type": "column"},
-            {"name": "y", "label": "Y-Axis", "type": "column"},
-            {"name": "width", "label": "Bar Width", "type": "number", "default": 0.8},
+    #"bar": {
+        #"label": "Bar Chart",
+        #"args": [
+            #{"name": "x", "label": "X-Axis", "type": "column"},
+            #{"name": "y", "label": "Y-Axis", "type": "column"},
+            #{"name": "width", "label": "Bar Width", "type": "number", "default": 0.8},
             #{"name": "bottom", "label": "Bottom", "type": "text"},
-            {"name": "align", "label": "Bar Alignment", "type": "literal", "options":['center', 'edge'], "default": "center"},
+            #{"name": "align", "label": "Bar Alignment", "type": "literal","options":['center', 'edge'], "default": "center"},
             #{"name": "color", "label": "Bar Color", "type": "text"} sns.color_palette("viridis")[3]
-        ],
+        #],
         #"advanced": [
             #{"name": "yerr", "label": "Y-Error", "type": "column"},
             #{"name": "ecolor", "label": "Error Bar Color", "type": "text"}, # call from preset palette
             #{"name":"log", "label":"Log Scale - Y-axis", "type":"Boolean", "default": 'false'}
         #]
-    },
-    "box": { 
-        "label": "Box Plot", # plotted from the seaborn function, the Matplotlib one is so complex, its confusing.
-        "args": [
-            {"name": "x", "label": "X-Axis", "type": "column"},
-            {"name": "y", "label": "Y-Axis", "type": "column"},
-            {"name": "hue", "label": "Hue", "type": "column"},
-            {"name": "orient", "label": "Orientation", "type": "literal", "options":['horizontal', 'vertical'], "default": "vertical"},
-            {"name": "saturation", "label": "Colour Saturation", "type": "number", "min": 0, "max": 1, "step": 0.1, "default": 0.75},           
-            {"name": "widths", "label": "Bar Width", "type": "number"},
-
-        ],
+    #},
+    #"box": { 
+        #"label": "Box Plot", # plotted from the seaborn function, the Matplotlib one is so complex, its confusing.
+        #"args": [
+            #{"name": "x", "label": "X-Axis", "type": "column"},
+            #{"name": "y", "label": "Y-Axis", "type": "column"},
+            #{"name": "hue", "label": "Hue", "type": "column"},
+            #{"name": "orient", "label": "Orientation", "type": "literal", "options":['horizontal', 'vertical'], "default": "vertical"},
+            #{"name": "saturation", "label": "Colour Saturation", "type": "number", "min": 0, "max": 1, "step": 0.1, "default": 0.75},           
+            #{"name": "widths", "label": "Bar Width", "type": "number"},
+        #],
         #"advanced": [
             #{"name": "order", "label": "Plor Order", "type": "text"},
             #{"name": "hue order", "label": "Hue Order", "type": "text"},
             #{"name": "color", "label": "Bar Color", "type": "text"},
             #{"name": "fill", "label": "Bar Fill", "type": "Boolean", "default": True},
         #]
-    },
-    "bubble": {
-        "label": "Bubble Chart",
-        "args": [
-            {"name": "x", "label": "X-Axis", "type": "column"},
-            {"name": "y", "label": "Y-Axis", "type": "column"},
-            {"name": "s", "label": "Bubble Size", "type": "column"},
-        ]
-    },
+    #},
+    #"bubble": {
+        #"label": "Bubble Chart",
+        #"args": [
+            #{"name": "x", "label": "X-Axis", "type": "column"},
+            #{"name": "y", "label": "Y-Axis", "type": "column"},
+            #{"name": "s", "label": "Bubble Size", "type": "column"},
+        #]
+    #},
     #"heat": {
         #"label": "Heatmap",
         #"args": [
             #{"name": "annot", "label": "Annotations", "type": "Boolean", "default": 'false'},
            #{"name": "width", "label": "Bar Width", "type": "number", "default": 1},
-            {"name": "bottom", "label": "Bottom", "type": "text"},
-            {"name": "align", "label": "Bar Alignment", "type": "text"}, # 'center', 'edge'}, default: 'center'
-            {"name": "color", "label": "Bar Color", "type": "text"} # call from preset palette
-        ],
-        "advanced": [
-            {"name": "yerr", "label": "Y-Error", "type": "column"},
-            {"name": "ecolor", "label": "Error Bar Color", "type": "text"}, # call from preset palette
+            #{"name": "bottom", "label": "Bottom", "type": "text"},
+            #{"name": "align", "label": "Bar Alignment", "type": "text"}, # 'center', 'edge'}, default: 'center'
+           # {"name": "color", "label": "Bar Color", "type": "text"} # call from preset palette
+        #],
+        #"advanced": [
+            #{"name": "yerr", "label": "Y-Error", "type": "column"},
+            #{"name": "ecolor", "label": "Error Bar Color", "type": "text"}, # call from preset palette
             #{"name":"log", "label":"Log Scale - Y-axis", "type":"Boolean", "default": 'false'}
-        ]
-    },
+       # ]
+    #},
     #"line": {
         #"label": "Line Chart",
         #"args": [
@@ -122,16 +121,16 @@ def home():
         #]
     #},
     # All params added 10/05/2025
-    "histogram": {
-        "label": "Histogram",
-        "args": [
-            {"name": "x", "label": "X-Axis", "type": "column"},
-            {"name": "bins", "label": "Bin Count", "type": "number"},
-            {"name": "align", "label": "Bar Alignment", "type": "literal", "options": ["left", "mid", "right"], "default": 'mid'}, # Literal| 'left', 'mid', 'right'
-            {"name": "orientation", "label": "Chart Orientation", "type": "literal", "options": ["vertical", "horizontal"], "default":'vertical'}, # Literal| 'horiontal', 'vertical'
+    #"histogram": {
+        #"label": "Histogram",
+        #"args": [
+            #{"name": "x", "label": "X-Axis", "type": "column"},
+            #{"name": "bins", "label": "Bin Count", "type": "number"},
+            #{"name": "align", "label": "Bar Alignment", "type": "literal", "options": ["left", "mid", "right"], "default": 'mid'}, # Literal| 'left', 'mid', 'right'
+            #{"name": "orientation", "label": "Chart Orientation", "type": "literal", "options": ["vertical", "horizontal"], "default":'vertical'}, # Literal| 'horiontal', 'vertical'
             #{"name": "log", "label":"Log Scale - Y-axis", "type":"Boolean", "default": False},
             #{"name": "color", "label": "Bar Color", "type": "text"} # sns.color_palette("viridis")[3]
-       ]
+       #]
        # "advanced": [
             #{"name": "range", "label": "Range", "type": "tuple"},
             #{"name": "density", "label": "Density", "type": "Boolean", "default": "False"},
@@ -143,7 +142,7 @@ def home():
             #{"name": "rwidth", "label":"rwidth", "type":"number", default:""}, #What is this?
             #{"name": "stacked", "label":"Stacked Bars", "type":"Boolean", "default":'False'},
         #]
-    },
+    #},
     "violin": {
         "label": "Violin Plot",
         "args": [
@@ -169,8 +168,8 @@ def home():
 
 @main_routes.route('/generate_plot', methods=['POST'])
 def generate_plot():
+    """Generates plot preview using matplotlib and the non-interactive backend Agg"""
     matplotlib.use('Agg') 
-    
     data = request.get_json()
     print(data)
     plot_type = data.get('plotType')
@@ -195,7 +194,6 @@ def generate_plot():
 
     # Load the CSV from disk
     df = pd.read_csv(csv_path)
-    
     if context and style and palette:
         sns.set_theme(context=context, style=style, palette=palette)
 
@@ -307,7 +305,7 @@ def generate_plot():
                 ax.set_xlabel(x_label)
             if y_label:
                 ax.set_ylabel(y_label)
-            if x_min is not None and x_max is not None:
+            if x_min is not None or x_max is not None:
                 ax.set_xlim(x_min, x_max)
             if y_min is not None and y_max is not None:
                 ax.set_ylim(y_min, y_max)    
@@ -327,6 +325,7 @@ def generate_plot():
 
 @main_routes.route('/reset_session')
 def reset_session():
+    "Resets session by deleting uploaded csv and clearing the Flask session."
     if os.path.isdir("static/uploads"):
         shutil.rmtree("static/uploads")
         session.clear()
@@ -334,6 +333,7 @@ def reset_session():
 
 @main_routes.route('/export_code',  methods=['POST'] )
 def export_code():
+    """ Gets the generated Python code from JS backend. Depending on the execution environment chosen in Step 1 of the workflow, exports as .ipynb or .py."""
    # Get the request data
     data = request.get_json()
     code = data.get('code')
@@ -344,23 +344,23 @@ def export_code():
         # Generate a Jupyter notebook (.ipynb)
         notebook = nbformat.v4.new_notebook()
         notebook.cells.append(nbformat.v4.new_code_cell(code))
-        
         # Write notebook to a file-like object in memory
         response = Response(
-            nbformat.writes(notebook), 
+            nbformat.writes(notebook),
             mimetype='application/json',
             headers={'Content-Disposition': 'attachment; filename=generated_code.ipynb'}
         )
         return response
-
-    elif file_extension == ".py":
+    
+    if file_extension == ".py":
         # Generate a Python file (.py)
         response = Response(
-            code, 
+            code,
             mimetype='text/plain',
             headers={'Content-Disposition': 'attachment; filename=generated_code.py'}
         )
         return response
 
     # If an unsupported file extension is requested, return an error
-    return Response("Unsupported file format", status=400)
+    else:
+        return Response("Unsupported file format", status=400)
