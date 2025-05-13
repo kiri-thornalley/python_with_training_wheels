@@ -8,11 +8,11 @@
 </head>
 
 <body>
-  <div style="display: flex; height: 100vh;">
-    <!-- Left: Multi-step form -->
-    <div id="form-pane" style="flex: 1; padding: 20px;">
+<div id="main-container" style="display: flex; height: 100vh;">
+  <!-- Left Pane -->
+  <div id="form-pane" style="width: 50%; padding: 20px; background: white;">
       <div class="form-step" id="step-1">
-        <h2>Step 1: Runtime Environment</h2>
+        <h2>Step 1a: Runtime Environment</h2>
         <p>Where will you be running this code, as this influences export format at the end of this workflow.<br><br>
           Jupyter Notebook and Google Colab will both export as .ipynb,but Colab has additional import arguments added to the code to import missing packages that do not exist by default e.g., seaborn.<br>
           VS Code will export as .py.
@@ -46,7 +46,8 @@
         <h3>Select Context</h3>
         <p>Where will this figure be used? The context parameter scales the size of plot elements</p>
         <select id="context-select">
-          <option value="notebook" selected>Notebook</option>
+          <option value="">--Choose Context--</option>
+          <option value="notebook">Notebook</option>
           <option value="paper">Paper</option>
           <option value="talk">Talk</option>
           <option value="poster">Poster</option>
@@ -55,6 +56,7 @@
         <p>The style parameter calls one of a set of five inbuilt Seaborn themes for styling a figure. <br>
           These typically control the colour of the figure background, the presence (or absence of a grid), and for the style 'ticks', the presence of ticks on both axes.</p>
         <select id="style-select">
+          <option value="">--Choose Style--</option>
           <option value="ticks">Ticks</option>
           <option value="white">White</option>
           <option value="whitegrid">White (with grid)</option>
@@ -98,8 +100,8 @@
           <option value="tab20c">Tab20c</option>
           </optgroup>
         </select> <br>
-        <button onclick="nextStep(3)">Next</button>
         <button onclick="prevStep(3)">Back</button>
+        <button onclick="nextStep(3)">Next</button>
       </div>
   
       <div class="form-step" id="step-4" style="display: none;">
@@ -184,9 +186,9 @@
           </div>
         {% endfor %}
         </select>
-        <button onclick="nextStep(4)">Next</button>
         <button onclick="prevStep(4)">Back</button>
-      </div>
+        <button onclick="nextStep(4)">Next</button>
+        </div>
 
       <div class="form-step" id="step-5" style="display: none;">
         <h2>Step 5: Add Labels</h2>
@@ -204,10 +206,10 @@
           <input type="number" id="y-axis_min"><br>
         <label for="y-axis_max">Y-axis Maximum:</label>
           <input type="number" id="y-axis_max"><br>-->
-
-        <button onclick="prevStep(5)">Back</button> <br>
-        <button onclick="generatePlotPreview()">Update Plot</button> <br>
-        <button onclick="nextStep(5)">Next</button> <br>
+        <br>
+        <button onclick="prevStep(5)">Back</button>
+        <button onclick="nextStep(5)">Next</button> <br> <br>
+        <button id="button2" onclick="generatePlotPreview()">Update Plot</button> 
       </div>
       <div class="form-step" id="step-6" style="display: none;">
         <h2>Step 6: Export Data</h2>
@@ -215,25 +217,30 @@
         Remember, this app does not store your data long term, you must export your code to more long term storage.</p>
         <br>
         <button onclick="exportCode()">Export Code</button><br><br>
-        <button onclick="prevStep(6)">Back</button> <br>
+        <button onclick="prevStep(6)">Back</button> <br><br>
         <button id="reset-button">Clear data and Reset</button>
       </div>
-    </div>
-  
-    <!-- Right: Code preview -->
-    <div id="code-pane" style="flex: 1; background: #f5f5f5; padding: 20px; overflow-y: auto;">
-      <h2>Generated Python Code</h2>
-      <pre> <code class="language-python" id="code-preview" style="white-space: pre-wrap; font-family: monospace;">
-        # Your generated Python code will appear here
-      </pre></code>
-
-    <!--Figure Preview-->
-      <div id="plot-preview-container" style="display: none;">
-      <h2>Live Plot Preview</h2> 
-      <img id="plot-preview" style="max-width: 100%;" />
-      </div>
-      </div>
   </div>
+
+  <!-- Right Pane: Fixed Layout -->
+  <div id="code-pane" style="flex: 1; display: flex; flex-direction: column; padding: 20px; background: #f5f5f5; overflow: hidden;">
+
+    <!-- Code Preview: Scrolls if too tall -->
+    <div id="code-scroll" style="max-height: 40vh; overflow-y: auto;">
+      <h2>Generated Python Code</h2>
+      <pre><code class="language-python" id="code-preview" style="white-space: pre-wrap; font-family: monospace;">
+        # Your generated Python code will appear here
+      </code></pre>
+    </div>
+
+    <!-- Plot Preview: Sits underneath -->
+    <div id="plot-preview-container" style="display: block; margin-top: 20px; flex: 1; overflow: auto;">
+      <h2>Live Plot Preview</h2>
+      <img id="plot-preview" style="max-width: 100%;" />
+    </div>
+
+  </div>
+</div>
   <script src="{{ url_for('static', filename='js/navigation.js') }}"></script>
   <!-- Include Prism's JS -->
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
