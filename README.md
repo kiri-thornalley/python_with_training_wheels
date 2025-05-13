@@ -46,7 +46,6 @@ Then open http://localhost:5000 in your browser.
 ## Development Roadmap
 ### Version 1.1
  - Further plot types available (e.g., Network graph, Heatmap, Box and Whisker Plot)
- - Implement highlight.js to modify appearance of generated code
  - Support for .xlsx upload
 ### Version 2.0
 #### Basic Exploratory Data Analysis
