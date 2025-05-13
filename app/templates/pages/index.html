@@ -62,18 +62,41 @@
           <option value="darkgrid">Dark (with grid)</option>
         </select>
         <h3>Select colour palette</h3>
-        <p>Only colourblind-friendly palettes are offered here</p>
-
+        <p>Only colourblind-friendly palettes are offered here. Colourmaps are often split into several categories based on their function.</p>
+        <ul>
+          <li><b>Perceptually Uniform:</b> a colormap in which equal steps in data are perceived as equal steps in the color space. For many applications, this is the best choice.</li>
+          <li><b>Sequential:</b> change in lightness and often saturation of color incrementally, often using a single hue; should be used for representing information that has ordering.</li>
+          <li><b>Diverging:</b> change in lightness and possibly saturation of two different colors that meet in the middle at an unsaturated color; should be used when the information being plotted has a critical middle value, or when the data deviates around zero.</li>
+          <li><b>Qualitative:</b> often are miscellaneous colours; should be used to represent information which does not have ordering or relationships.</li>
+        </ul>
           <div id="palette-preview-container" style="display: none; margin-top: 10px;">
-            <strong>Palette Preview:</strong><br>
             <img id="palette-preview" src="", alt="Palette preview" style="max-width: 300px;">
             </div>
 
         <select id="palette-select">
+          <option value="">--Choose Palette--</option>
+          <optgroup label="Perceptually Uniform Sequential Colourmaps">
           <option value="viridis">Viridis</option>
           <option value="magma">Magma</option>
           <option value="plasma">Plasma</option>
           <option value="inferno">Inferno</option>
+          <option value="cividis">Cividis</option>
+          </optgroup>
+          <optgroup label="Sequential Colourmaps">
+          <option value="Greys">Greys</option>
+          <option value="Purples">Purples</option>
+          <option value="Blues">Blues</option>
+          <option value="Greens">Greens</option>
+          <option value="Oranges">Oranges</option>
+          </optgroup>
+          <optgroup label="Diverging Colourmaps">
+          <option value="PiYG">Pink to Green</option>
+          <option value="RdYlBu">Red to Blue</option>
+          </optgroup>
+          <optgroup label="Qualitative Colourmaps">
+          <option value="tab20b">Tab20b</option>
+          <option value="tab20c">Tab20c</option>
+          </optgroup>
         </select> <br>
         <button onclick="nextStep(3)">Next</button>
         <button onclick="prevStep(3)">Back</button>

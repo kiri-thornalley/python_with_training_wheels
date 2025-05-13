@@ -45,7 +45,15 @@ h3 {
 }
 
 p {
-    font-family: 'Montserrat';
+    font-family: 'Arial';
+    font-size: 11pt;
+    color: black;
+    margin-block-start: 0.5em;
+    margin-block-end: 0.5em;
+}
+
+ul {
+    font-family: 'Arial';
     font-size: 11pt;
     color: black;
     margin-block-start: 0.5em;
