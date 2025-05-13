@@ -117,7 +117,7 @@ function generatePlotPreview() {
       context: userSelections.plotContext,
       style: userSelections.plotStyle,
       palette: userSelections.plotPalette,
-      plotArgs: userSelections.plotArgs, // Already up to date
+      plotArgs: userSelections.plotArgs,
       xAxisLabel: userSelections.xAxisLabel,
       yAxisLabel: userSelections.yAxisLabel,
       figureTitle: userSelections.figureTitle,
@@ -231,7 +231,7 @@ function updateCodePreview() {
     code += "fig, ax = plt.subplots()\nax.bar";
   } else if (userSelections.plotType === "violin") {
     if (userSelections.plotArgs) {
-      code += `# Plot Violin Plot\nsns.violinplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.y}', data=df)\n`;
+      code += `# Plot Violin Plot\nsns.violinplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', data=df)\n`;
     }
     code += 'sns.despine(offset=10, trim=True)\n\n';
   }
@@ -274,14 +274,17 @@ function nextStep(currentStep) {
 
   } else if (currentStep === 4) {
     userSelections.plotType = document.getElementById('plot-select').value;
-    userSelections.plotArgs = collectPlotArgs(); // <-- collect args once, only here
+    userSelections.plotArgs = collectPlotArgs();
 
-  } else if (currentStep === 5) {
-    // Save inputs the first time (in case user skips to next step quickly)
+  }  else if (currentStep === 5) {
+    userSelections.plotType = document.getElementById('plot-select').value;
+    //userSelections.plotArgs = collectPlotArgs(); // Capture plot type and args again, otherwise plot preview disappears
+
+  }  else if (currentStep === 6) {
+    //userSelections.plotType = document.getElementById('plot-select').value;
     userSelections.figureTitle = document.getElementById('figure-title').value;
     userSelections.xAxisLabel = document.getElementById('x-axis_label').value;
     userSelections.yAxisLabel = document.getElementById('y-axis_label').value;
-
     const parseOrNull = id => {
       const val = document.getElementById(id).value;
       return val === "" ? null : parseFloat(val);
@@ -293,22 +296,6 @@ function nextStep(currentStep) {
     userSelections.yAxisMax = parseOrNull('y-axis_max');
   }
 
-  // Always re-read Step 5 inputs if just left Step 5 (to keep previews accurate)
-  if (currentStep === 5) {
-    userSelections.figureTitle = document.getElementById('figure-title').value;
-    userSelections.xAxisLabel = document.getElementById('x-axis_label').value;
-    userSelections.yAxisLabel = document.getElementById('y-axis_label').value;
-
-    const parseOrNull = id => {
-      const val = document.getElementById(id).value;
-      return val === "" ? null : parseFloat(val);
-    };
-
-    userSelections.xAxisMin = parseOrNull('x-axis_min');
-    userSelections.xAxisMax = parseOrNull('x-axis_max');
-    userSelections.yAxisMin = parseOrNull('y-axis_min');
-    userSelections.yAxisMax = parseOrNull('y-axis_max');
-  }
 
   if (window.uploadedColumns) {
     populateColumnSelects(window.uploadedColumns);
@@ -343,7 +330,16 @@ function prevStep(currentStep) {
     generatePlotPreview();
   }
 
-  if (currentStep === 5) {
+  else if (currentStep === 6) {
+    userSelections.xAxisLabel = null;
+    userSelections.yAxisLabel = null;
+    userSelections.figureTitle = null;
+    userSelections.xAxisMin = null;
+    userSelections.xAxisMax = null;
+    userSelections.yAxisMin = null;
+    userSelections.yAxisMax = null;
+
+  } else if (currentStep === 5) {
     userSelections.xAxisLabel = null;
     userSelections.yAxisLabel = null;
     userSelections.figureTitle = null;
@@ -356,8 +352,10 @@ function prevStep(currentStep) {
     userSelections.plotContext = null;
     userSelections.plotStyle = null;
     userSelections.plotPalette = null;
+
   } else if (currentStep === 3) {
     userSelections.DataFrame = null;
+
   } else if (currentStep === 2) {
     userSelections.environment = null;
   }
