@@ -208,9 +208,10 @@ function updateCodePreview() {
   // ENVIRONMENT-DEPENDENT SETUP
   if (userSelections.environment === "colab") {
     code += "# Google Colab setup\n!pip install seaborn\n\n";
+  } else{
+        code += "# Imports\nimport matplotlib.pyplot as plt\nimport seaborn as sns\nimport pandas as pd\n\n# Override default params. Convert pdf font type to TrueType42 for publication.\nplt.rcParams['font.family'] = 'Arial'\nplt.rcParams['pdf.fonttype'] = 42\n\n";
   }
 
-  code += "import matplotlib.pyplot as plt\nimport seaborn as sns\nimport pandas as pd\n\n";
   // Import dataset
   if (userSelections.dataFrame) {
       code += `# Import Data\n`;
@@ -230,10 +231,38 @@ function updateCodePreview() {
   if (userSelections.plotType === "bar") {
     code += "fig, ax = plt.subplots()\nax.bar";
   } else if (userSelections.plotType === "violin") {
-    if (userSelections.plotArgs) {
-      code += `# Plot Violin Plot\nsns.violinplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', data=df)\n`;
-    }
+      if (userSelections.plotArgs) {
+        code += `# Plot Violin Plot\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.violinplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n`;
+      }
     code += 'sns.despine(offset=10, trim=True)\n\n';
+  } else if (userSelections.plotType === "box") { //TODO:
+      if (userSelections.plotArgs) {
+        code += `# Plot Box Plot\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.boxplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n\n`;
+      }
+  } else if (userSelections.plotType === "bubble") { //TODO:
+      if (userSelections.plotArgs) {
+        code += `# Plot Bubble Chart\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.boxplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n\n`;
+      }
+  } else if (userSelections.plotType === "heat") { //TODO:
+      if (userSelections.plotArgs) {
+        code += `# Plot Heatmap\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.boxplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n\n`;
+      }
+  } else if (userSelections.plotType === "line") { //TODO:
+      if (userSelections.plotArgs) {
+        code += `# Plot Line Chart\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.boxplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n\n`;
+      }
+  } else if (userSelections.plotType === "density") { //TODO:
+      if (userSelections.plotArgs) {
+        code += `# Plot Density Plot\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.boxplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n\n`;
+      }
+  } else if (userSelections.plotType === "histogram") { //TODO:
+      if (userSelections.plotArgs) {
+        code += `# Plot Histogram\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.boxplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n\n`;
+      }
+  } else if (userSelections.plotType === "scatter") { //TODO:
+      if (userSelections.plotArgs) {
+        code += `# Plot Scatter Chart\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.boxplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n\n`;
+      }
   }
 
   if (userSelections.figureTitle) {
@@ -246,6 +275,13 @@ function updateCodePreview() {
 
   if (userSelections.yAxisLabel) {
     code += `ax.set_ylabel('${userSelections.yAxisLabel}')\n\n`;
+  }
+  if (userSelections.plotType &&
+    userSelections.plotArgs &&
+    userSelections.xAxisLabel &&
+    userSelections.yAxisLabel
+  ) {
+      code += `# Save Figure as both .png for presentations and .pdf for publication\nplt.savefig('${userSelections.plotType}.TIFF', dpi=300, format='TIFF')\nplt.savefig('${userSelections.plotType}.pdf', dpi=300, format='pdf')\nplt.show()\n\n`;
   }
 
   // Update the code preview content with the generated code
@@ -412,13 +448,19 @@ function collectPlotArgs() {
     const value = input.value;
     const type = input.dataset.type;
 
-    if (value === "") return;
+    if (!name || value === "") return;
 
     switch (type) {
       case "number":
         const num = parseFloat(value);
         if (!isNaN(num)) args[name] = num;
         break;
+
+      case "boolean":
+        // Convert string "true"/"false" to actual boolean
+        args[name] = value.toLowerCase() === "true";
+        break;
+
       default:
         args[name] = value;
     }
