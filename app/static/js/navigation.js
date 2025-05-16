@@ -14,6 +14,9 @@ const userSelections = {
   plotArgs: {},
 };
 
+// AbortController to work in tandem with Debounce for modifying plot args in step 4
+let currentAbortController = null;
+
 // Attach main event listeners
 document.addEventListener("DOMContentLoaded", () => {
   PalettePreview();
@@ -104,11 +107,18 @@ function updatePlotPreview() {
 function generatePlotPreview() {
   const plotType = userSelections.plotType;
   if (!plotType) return;
-    userSelections.figureTitle = document.getElementById('figure-title').value;
-    userSelections.xAxisLabel = document.getElementById('x-axis_label').value;
-    userSelections.yAxisLabel = document.getElementById('y-axis_label').value;
 
-    
+  // Abort any previous request only in Step 4
+  if (currentAbortController) {
+    currentAbortController.abort();
+  }
+
+  currentAbortController = new AbortController();
+
+  userSelections.figureTitle = document.getElementById('figure-title').value;
+  userSelections.xAxisLabel = document.getElementById('x-axis_label').value;
+  userSelections.yAxisLabel = document.getElementById('y-axis_label').value;
+
   fetch("/generate_plot", {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -125,15 +135,25 @@ function generatePlotPreview() {
       xAxisMax: userSelections.xAxisMax,
       yAxisMin: userSelections.yAxisMin,
       yAxisMax: userSelections.yAxisMax,
-    })
+    }),
+    signal: currentAbortController.signal
   })
-    .then(res => res.blob())
+    .then(res => {
+      if (!res.ok) throw new Error('Network response was not ok');
+      return res.blob();
+    })
     .then(imageBlob => {
       const imageURL = URL.createObjectURL(imageBlob);
       document.getElementById("plot-preview").src = imageURL;
       document.getElementById('plot-preview-container').style.display = 'block';
     })
-    .catch(err => console.error("Plot generation failed:", err));
+    .catch(err => {
+      if (err.name === 'AbortError') {
+        console.log('🔁 Previous request aborted');
+      } else {
+        console.error("Plot generation failed:", err);
+      }
+    });
 }
 
 // Function to populate dropdown menus of column headings - Step 4
@@ -241,7 +261,7 @@ function updateCodePreview() {
       }
   } else if (userSelections.plotType === "bubble") { //TODO:
       if (userSelections.plotArgs) {
-        code += `# Plot Bubble Chart\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.boxplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n\n`;
+        code += `# Plot Bubble Chart\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.boxplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', s='${userSelections.plotArgs.size}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n\n`;
       }
   } else if (userSelections.plotType === "heat") { //TODO:
       if (userSelections.plotArgs) {
@@ -261,7 +281,7 @@ function updateCodePreview() {
       }
   } else if (userSelections.plotType === "scatter") { //TODO:
       if (userSelections.plotArgs) {
-        code += `# Plot Scatter Chart\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.boxplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n\n`;
+        code += `# Plot Scatter Chart\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nax.scatter(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', cmap='${userSelections.Palette}', data=df, ax=ax)\n\n`;
       }
   }
 
@@ -423,7 +443,7 @@ function onPlotTypeChange() {
       inputs.forEach(input => {
         input.addEventListener('input', () => {
           userSelections.plotArgs = collectPlotArgs(); // Collect new plot args
-          generatePlotPreview(); // Immediately regenerate plot preview
+          debouncedGeneratePlotPreview(); // Delay regenerating plot
         });
       });
     }
@@ -485,3 +505,18 @@ function ResetButton() {
       });
   });
 }
+
+// Debounce function to delay generatePlotPreview function in Step 4
+function debounce(func, delay) {
+  let timeout;
+  console.log('debounce created');
+  console.log(typeof AbortController);
+  return function(...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), delay);
+  };
+}
+
+// Replace direct call with debounced version, 400 ms delay
+const debouncedGeneratePlotPreview = debounce(generatePlotPreview, 400);
+
