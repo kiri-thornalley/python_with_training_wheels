@@ -119,16 +119,16 @@
             {% for arg in config.args %}
               <label for="{{ key }}-{{ arg.name }}">{{ arg.label }}:</label>
               {% if arg.type == "column" %}
-                <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" class="column-select" data-type="column" onchange="generatePlotPreview()">
+                <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" class="column-select" data-type="column" onchange="debouncedGeneratePlotPreview()">
                   <option value="">Select column</option>
                 </select>
               {% elif arg.type == "boolean" %}
-                <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" data-type="boolean" onchange="generatePlotPreview()">
+                <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" data-type="boolean" onchange="debouncedGeneratePlotPreview()">
                   <option value="true" {% if arg.default == 'true' %}selected{% endif %}>True</option>
                   <option value="false" {% if arg.default == 'false' %}selected{% endif %}>False</option>
                 </select>
               {% elif arg.type == "literal" %}
-                <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" data-type="literal" onchange="generatePlotPreview()">
+                <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" data-type="literal" onchange="debouncedGeneratePlotPreview()">
                   {% for option in arg.options %}
                     <option value="{{ option }}" {% if arg.default == option %}selected{% endif %}>{{ option }}</option>
                   {% endfor %}
@@ -142,7 +142,7 @@
                       {% if arg.min %}min="{{ arg.min }}"{% endif %}
                       {% if arg.max %}max="{{ arg.max }}"{% endif %}
                       {% if arg.step %}step="{{ arg.step }}"{% endif %}
-                      onchange="generatePlotPreview()">
+                      onchange="debouncedGeneratePlotPreview()">
               {% endif %}
               <br>
             {% endfor %}
@@ -154,15 +154,15 @@
                 {% for arg in config.advanced %}
                   <label for="{{ key }}-{{ arg.name }}">{{ arg.label }}:</label>
                   {% if arg.type == "column" %}
-                    <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" class="column-select" data-type="column" onchange="generatePlotPreview()">
+                    <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" class="column-select" data-type="column" onchange="debouncedGeneratePlotPreview()">
                     </select>
                   {% elif arg.type == "Boolean" %}
-                    <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" data-type="boolean" onchange="generatePlotPreview()">
+                    <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" data-type="boolean" onchange="debouncedGeneratePlotPreview()">
                       <option value="true" {% if arg.default == 'true' %}selected{% endif %}>True</option>
                       <option value="false" {% if arg.default == 'false' %}selected{% endif %}>False</option>
                     </select>
                   {% elif arg.type == "literal" %}
-                    <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" data-type="literal" onchange="generatePlotPreview()">
+                    <select id="{{ key }}-{{ arg.name }}" name="{{ arg.name }}" data-type="literal" onchange="debouncedGeneratePlotPreview()">
                       {% for option in arg.options %}
                         <option value="{{ option }}" {% if arg.default == option %}selected{% endif %}>{{ option }}</option>
                       {% endfor %}
@@ -176,7 +176,7 @@
                       {% if arg.min %}min="{{ arg.min }}"{% endif %}
                       {% if arg.max %}max="{{ arg.max }}"{% endif %}
                       {% if arg.step %}step="{{ arg.step }}"{% endif %}
-                      onchange="generatePlotPreview()">
+                      onchange="debouncedGeneratePlotPreview()">
                   {% endif %}
                   <br>
                 {% endfor %}
