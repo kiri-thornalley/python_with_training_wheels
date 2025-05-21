@@ -149,7 +149,7 @@ function generatePlotPreview() {
     })
     .catch(err => {
       if (err.name === 'AbortError') {
-        console.log('🔁 Previous request aborted');
+        console.log('Previous request aborted');
       } else {
         console.error("Plot generation failed:", err);
       }
@@ -227,15 +227,15 @@ function updateCodePreview() {
 
   // ENVIRONMENT-DEPENDENT SETUP
   if (userSelections.environment === "colab") {
-    code += "# Google Colab setup\n!pip install seaborn\n\n";
+    code += '# Google Colab setup\n\n!pip install seaborn\n\n';
   } else{
-        code += "# Imports\nimport matplotlib.pyplot as plt\nimport seaborn as sns\nimport pandas as pd\n\n# Override default params. Convert pdf font type to TrueType42 for publication.\nplt.rcParams['font.family'] = 'Arial'\nplt.rcParams['pdf.fonttype'] = 42\n\n";
+        code += '# Imports\n\nimport matplotlib.pyplot as plt\nimport seaborn as sns\nimport pandas as pd\n\n# Override default params. Convert pdf font type to TrueType42 for publication.\n\nplt.rcParams["font.family"] = "Arial"\nplt.rcParams["pdf.fonttype"] = 42\n\n';
   }
 
   // Import dataset
   if (userSelections.dataFrame) {
-      code += `# Import Data\n`;
-      code += `df = pd.read_csv('data/${userSelections.dataFrame}')\n\n`;
+      code += `# Import Data\n\n`;
+      code += `df = pd.read_csv("data/${userSelections.dataFrame}")\n\n`;
   }
 
   // ONLY add plot setup if context/style/palette are selected
@@ -244,53 +244,53 @@ function updateCodePreview() {
     userSelections.plotStyle &&
     userSelections.plotPalette
   ) {
-      code += `# Set Seaborn theme\nsns.set_theme(context='${userSelections.plotContext}', style='${userSelections.plotStyle}', palette='${userSelections.plotPalette}')\n\n`;
+      code += `# Set Seaborn theme\n\nsns.set_theme(context="${userSelections.plotContext}", style="${userSelections.plotStyle}", palette="${userSelections.plotPalette}")\n\n`;
   }
 
   // ONLY add plot command if selected
-  if (userSelections.plotType === "bar") {
-    code += "fig, ax = plt.subplots()\nax.bar";
+  if (userSelections.plotType === "bar") { //TODO:
+    code += `# Plot Violin Plot\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.violinplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n`;
   } else if (userSelections.plotType === "violin") {
       if (userSelections.plotArgs) {
-        code += `# Plot Violin Plot\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.violinplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n`;
+        code += `# Plot Violin Plot\n\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.violinplot(\n    x="${userSelections.plotArgs.x}",\n   y="${userSelections.plotArgs.y}",\n   hue="${userSelections.plotArgs.hue}",\n   palette="${userSelections.plotPalette}",\n    data=df,\n    ax=ax\n)\n\n`;
       }
     code += 'sns.despine(offset=10, trim=True)\n\n';
   } else if (userSelections.plotType === "box") { //TODO:
       if (userSelections.plotArgs) {
-        code += `# Plot Box Plot\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.boxplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n\n`;
+        code += `# Plot Box Plot\n\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.boxplot(\n    x="${userSelections.plotArgs.x}",\n   y="${userSelections.plotArgs.y}",\n   hue="${userSelections.plotArgs.hue}",\n   palette="${userSelections.plotPalette}",\n    data=df,\n    ax=ax\n)\n\n`;
       }
   } else if (userSelections.plotType === "bubble") { //TODO:
       if (userSelections.plotArgs) {
-        code += `# Plot Bubble Chart\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.boxplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', s='${userSelections.plotArgs.size}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n\n`;
+        code += `# Plot Bubble Chart\n\nfig, ax = plt.subplots(figsize=(6, 4), layout="constrained")\nax.scatter(\n   x="${userSelections.plotArgs.x}",\n   y='${userSelections.plotArgs.y}',\n   s='${userSelections.plotArgs.s}',\n   marker='${userSelections.plotArgs.marker}',\n   cmap='${userSelections.plotPalette}',\n   data=df,\n)\n\n`;
       }
   } else if (userSelections.plotType === "heat") { //TODO:
       if (userSelections.plotArgs) {
-        code += `# Plot Heatmap\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.boxplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n\n`;
+        code += `# Plot Heatmap\n\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.boxplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n\n`;
       }
   } else if (userSelections.plotType === "line") { //TODO:
       if (userSelections.plotArgs) {
-        code += `# Plot Line Chart\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.boxplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n\n`;
+        code += `# Plot Line Chart\n\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.boxplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n\n`;
       }
   } else if (userSelections.plotType === "density") { //TODO:
       if (userSelections.plotArgs) {
-        code += `# Plot Density Plot\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.boxplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n\n`;
+        code += `# Plot Density Plot\n\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.boxplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n\n`;
       }
   } else if (userSelections.plotType === "histogram") { //TODO:
       if (userSelections.plotArgs) {
-        code += `# Plot Histogram\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nsns.boxplot(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', hue='${userSelections.plotArgs.hue}', palette='${userSelections.plotPalette}', data=df, ax=ax)\n\n`;
+        code += `# Plot Histogram\n\nfig, ax = plt.subplots(figsize=(6, 4), layout="constrained")\nax.hist(\n   x="${userSelections.plotArgs.x}",\n   bins=${userSelections.plotArgs.bins},\n   data=df\n)\n`;
       }
   } else if (userSelections.plotType === "scatter") { //TODO:
       if (userSelections.plotArgs) {
-        code += `# Plot Scatter Chart\nfig, ax = plt.subplots(figsize=(6, 4), layout='constrained')\nax.scatter(x='${userSelections.plotArgs.x}', y='${userSelections.plotArgs.y}', cmap='${userSelections.Palette}', data=df, ax=ax)\n\n`;
+        code += `# Plot Scatter Chart\n\nfig, ax = plt.subplots(figsize=(6, 4), layout="constrained")\nax.scatter(\n   x="${userSelections.plotArgs.x}",\n   y='${userSelections.plotArgs.y}',\n   marker='${userSelections.plotArgs.marker}',\n    data=df\n)\n\n`;
       }
   }
 
   if (userSelections.figureTitle) {
-    code += `# Plot Figure Title\nax.set_title('${userSelections.figureTitle}')\n\n`;
+    code += `# Plot Figure Title\n\nax.set_title('${userSelections.figureTitle}')\n\n`;
   }
 
   if (userSelections.xAxisLabel) {
-    code += `# Set Axis Labels\nax.set_xlabel('${userSelections.xAxisLabel}')\n`;
+    code += `# Set Axis Labels\n\nax.set_xlabel('${userSelections.xAxisLabel}')\n`;
   }
 
   if (userSelections.yAxisLabel) {
@@ -298,10 +298,9 @@ function updateCodePreview() {
   }
   if (userSelections.plotType &&
     userSelections.plotArgs &&
-    userSelections.xAxisLabel &&
-    userSelections.yAxisLabel
+    userSelections.xAxisLabel
   ) {
-      code += `# Save Figure as both .png for presentations and .pdf for publication\nplt.savefig('${userSelections.plotType}.TIFF', dpi=300, format='TIFF')\nplt.savefig('${userSelections.plotType}.pdf', dpi=300, format='pdf')\nplt.show()\n\n`;
+      code += `# Save Figure as both .png for presentations and .pdf for publication\n\nplt.savefig("${userSelections.plotType}.TIFF", dpi=300, format="TIFF")\nplt.savefig("${userSelections.plotType}.pdf", dpi=300, format="pdf")\nplt.show()\n\n`;
   }
 
   // Update the code preview content with the generated code
