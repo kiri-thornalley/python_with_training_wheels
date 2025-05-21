@@ -50,7 +50,6 @@ def home():
         #"label": "Bar Chart",
         #"args": [
             #{"name": "x", "label": "X-Axis", "type": "column"},
-            #{"name": "y", "label": "Y-Axis", "type": "column"},
             #{"name": "width", "label": "Bar Width", "type": "number", "default": 0.8},
             #{"name": "bottom", "label": "Bottom", "type": "text"},
             #{"name": "align", "label": "Bar Alignment", "type": "literal","options":['center', 'edge'], "default": "center"},
@@ -62,31 +61,40 @@ def home():
             #{"name":"log", "label":"Log Scale - Y-axis", "type":"Boolean", "default": 'false'}
         #]
     #},
-    #"box": { 
-        #"label": "Box Plot", # plotted from the seaborn function, the Matplotlib one is so complex, its confusing.
-        #"args": [
-            #{"name": "x", "label": "X-Axis", "type": "column"},
-            #{"name": "y", "label": "Y-Axis", "type": "column"},
-            #{"name": "hue", "label": "Hue", "type": "column"},
-            #{"name": "orient", "label": "Orientation", "type": "literal", "options":['horizontal', 'vertical'], "default": "vertical"},
-            #{"name": "saturation", "label": "Colour Saturation", "type": "number", "min": 0, "max": 1, "step": 0.1, "default": 0.75},           
-            #{"name": "widths", "label": "Bar Width", "type": "number"},
-        #],
-        #"advanced": [
-            #{"name": "order", "label": "Plor Order", "type": "text"},
+    "box": { 
+        "label": "Box and Whisker Plot", # plotted from the seaborn function, the Matplotlib one is so complex, its confusing.
+        "args": [
+            {"name": "x", "label": "X-Axis", "type": "column"},
+            {"name": "y", "label": "Y-Axis", "type": "column"},
+            {"name": "hue", "label": "Hue", "type": "column"},
+            {"name": "saturation", "label": "Colour Saturation", "type": "number", "min": 0, "max": 1, "step": 0.1, "default": 0.75},           
+            {"name": "widths", "label": "Bar Width", "type": "number", "default": 0.8}
+        ],
+        "advanced": [
+            #{"name": "order", "label": "Plot Order", "type": "text"},
             #{"name": "hue order", "label": "Hue Order", "type": "text"},
             #{"name": "color", "label": "Bar Color", "type": "text"},
-            #{"name": "fill", "label": "Bar Fill", "type": "Boolean", "default": True},
-        #]
-    #},
-    #"bubble": {
-        #"label": "Bubble Chart",
-        #"args": [
-            #{"name": "x", "label": "X-Axis", "type": "column"},
-            #{"name": "y", "label": "Y-Axis", "type": "column"},
-            #{"name": "s", "label": "Bubble Size", "type": "column"},
-        #]
-    #},
+            {"name": "fill", "label": "Bar Fill", "type": "Boolean", "default": True},
+            #{"name": "orient", "label": "Orientation", "type": "literal", "options":['None','h', 'v'], "default": "None"},
+        ]
+    },
+    "bubble": { #All params added 21/05/25
+        "label": "Bubble Chart",
+        "args": [
+            {"name": "x", "label": "X-Axis", "type": "column"},
+            {"name": "y", "label": "Y-Axis", "type": "column"},
+            {"name": "s", "label": "Bubble Size", "type": "column"},
+            {"name": "marker", "label": "Marker Style", "type": "literal", "options":['o', 'v', '^', '>','<','s','p', '*','x'], "default": 'o'}
+        ],
+        "advanced":[
+            #{"name": "alpha", "label": "Alpha", "type": "number", "min": 0, "max": 1, "step": 0.1},
+            #{"name": "linewidths", "label": "Line Width", "type": "number", "default": 1.5},
+            #{"name": "plotnonfinite", "label":"Plot nonfinite values", "type":"Boolean", "default":'False'}
+            #{"name": "norm", "label":"Normalisation Method", "type":"text"},
+            #{"name": "vmin", "label":"", "type":"number"}, # Outlines the range the colourmap covers
+            #{"name": "vmax", "label":"", "type":"number"}, 
+        ]
+    },
     #"heat": {
         #"label": "Heatmap",
         #"args": [
@@ -121,16 +129,16 @@ def home():
         #]
     #},
     # All params added 10/05/2025
-    #"histogram": {
-        #"label": "Histogram",
-        #"args": [
-            #{"name": "x", "label": "X-Axis", "type": "column"},
-            #{"name": "bins", "label": "Bin Count", "type": "number"},
+    "histogram": {
+        "label": "Histogram",
+        "args": [
+            {"name": "x", "label": "X-Axis", "type": "column"},
+            {"name": "bins", "label": "Bin Count", "type": "number"}
             #{"name": "align", "label": "Bar Alignment", "type": "literal", "options": ["left", "mid", "right"], "default": 'mid'}, # Literal| 'left', 'mid', 'right'
             #{"name": "orientation", "label": "Chart Orientation", "type": "literal", "options": ["vertical", "horizontal"], "default":'vertical'}, # Literal| 'horiontal', 'vertical'
             #{"name": "log", "label":"Log Scale - Y-axis", "type":"Boolean", "default": False},
-            #{"name": "color", "label": "Bar Color", "type": "text"} # sns.color_palette("viridis")[3]
-       #]
+            #{"name": "color", "label": "Bar Color", "type": "number"} # build as sns.color_palette("viridis")[3]
+       ],
        # "advanced": [
             #{"name": "range", "label": "Range", "type": "tuple"},
             #{"name": "density", "label": "Density", "type": "Boolean", "default": "False"},
@@ -139,30 +147,42 @@ def home():
             #{"name": "bottom", "label":"Bottom", "type":"Array", "default": 'None'},
             #{"name": "histtype", "label":"Histogram Style", "type": "literal", "options": ["bar", "barstacked", "step", "stepfilled"], "default": 'bar'}, # Literal| 'bar', 'barstacked', 'step', 'stepfilled'
             #{"name": "label", "label":"Bar Label", "type":"text"},
-            #{"name": "rwidth", "label":"rwidth", "type":"number", default:""}, #What is this?
+            #{"name": "rwidth", "label":"rwidth", "type":"number", default:""}, # What is this?
             #{"name": "stacked", "label":"Stacked Bars", "type":"Boolean", "default":'False'},
         #]
-    #},
+    },
     "violin": {
         "label": "Violin Plot",
         "args": [
             {"name": "x", "label": "X-Axis", "type": "column"},
             {"name": "y", "label": "Y-Axis", "type": "column"},
             {"name": "hue", "label": "hue", "type": "column"},
+            {"name": "orient", "label": "Orientation", "type": "literal", "options":['horizontal', 'vertical'], "default": "None"},
             #{"name": "width", "label": "Bar Width", "type": "text"},
             #{"name": "color", "label": "Bar Color", "type": "text"}
-        ]
+        ],
+        #"advanced":[
+            #{"name": "saturation", "label": "Colour Saturation", "type": "number", "min": 0, "max": 1, "step": 0.1, "default": 0.75},
+            #{"name": "fill", "label":"Fill", "type":"Boolean", "default":'True'}
+        #] 
     },
-    #"scatter": {
-        #"label": "Scatter Plot",
-        #"args": [
-           # {"name": "x", "label": "X-Axis", "type": "column"},
-           # {"name": "y", "label": "Y-Axis", "type": "column"},
-        #]
+    "scatter": {
+        "label": "Scatter Plot",
+        "args": [
+            {"name": "x", "label": "X-Axis", "type": "column"},
+            {"name": "y", "label": "Y-Axis", "type": "column"},
+            #{"name": "color", "label": "Point Color", "type": "text"}
+            {"name": "marker", "label": "Marker Style", "type": "literal", "options":['o', 'v', '^', '>','<','s','p', '*','x'], "default": 'o'}
+        ],
         #"advanced": [
             #{"name": "alpha", "label": "Alpha", "type": "number", "min": 0, "max": 1, "step": 0.1},
+            #{"name": "linewidths", "label": "Line Width", "type": "number", "default": 1.5},
+            #{"name": "plotnonfinite", "label":"Plot nonfinite values", "type":"Boolean", "default":'False'}
+            #{"name": "norm", "label":"Normalisation Method", "type":"text"},
+            #{"name": "vmin", "label":"", "type":"number"}, # Outlines the range the colourmap covers
+            #{"name": "vmax", "label":"", "type":"number"}, 
         #]
-    #}
+    }
     }
     return render_template('pages/index.html', plot_types=PLOT_TYPES)  # Render the homepage
 
@@ -197,7 +217,7 @@ def generate_plot():
     if context and style and palette:
         sns.set_theme(context=context, style=style, palette=palette)
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(6, 4), layout='constrained', dpi=100)
 
     try:
         if plot_type == 'bar':
@@ -213,7 +233,7 @@ def generate_plot():
             if y_min is not None and y_max is not None:
                 ax.set_ylim(y_min, y_max)
         elif plot_type == 'box':
-            ax.boxplot(data=df, **plot_args)
+            sns.boxplot(data=df, **plot_args)
             if title:
                 ax.set_title(title)
             if x_label:
@@ -280,9 +300,9 @@ def generate_plot():
                 ax.set_xlabel(x_label)
             if y_label:
                 ax.set_ylabel(y_label)
-            if x_min is not None and x_max is not None:
+            if x_min is not None or x_max is not None:
                 ax.set_xlim(x_min, x_max)
-            if y_min is not None and y_max is not None:
+            if y_min is not None or y_max is not None:
                 ax.set_ylim(y_min, y_max)
         elif plot_type == 'heat':
             sns.heatmap(df.corr(), ax=ax)
@@ -292,9 +312,9 @@ def generate_plot():
                 ax.set_xlabel(x_label)
             if y_label:
                 ax.set_ylabel(y_label)
-            if x_min is not None and x_max is not None:
+            if x_min is not None or x_max is not None:
                 ax.set_xlim(x_min, x_max)
-            if y_min is not None and y_max is not None:
+            if y_min is not None or y_max is not None:
                 ax.set_ylim(y_min, y_max)
         elif plot_type == 'violin':
             sns.violinplot(data=df, ax=ax, **plot_args)
@@ -305,7 +325,7 @@ def generate_plot():
                 ax.set_xlabel(x_label)
             if y_label:
                 ax.set_ylabel(y_label)
-            if x_min is not None or x_max is not None:
+            if x_min is not None and x_max is not None:
                 ax.set_xlim(x_min, x_max)
             if y_min is not None and y_max is not None:
                 ax.set_ylim(y_min, y_max)    
@@ -316,7 +336,6 @@ def generate_plot():
 
     # Convert plot to PNG
     buf = io.BytesIO()
-    plt.tight_layout()
     plt.savefig(buf, format='png')
     plt.close(fig)
     buf.seek(0)
