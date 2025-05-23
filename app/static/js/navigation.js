@@ -371,52 +371,81 @@ function prevStep(currentStep) {
   document.getElementById(`step-${currentStep}`).style.display = 'none';
   document.getElementById(`step-${currentStep - 1}`).style.display = 'block';
 
-  if (currentStep === 5) {
-    const plotType = userSelections.plotType;  // Save before wiping
-    const plotArgsBlock = document.querySelector(`#args-${plotType}`);
-    if (plotArgsBlock) {
-      const inputs = plotArgsBlock.querySelectorAll('input, select, textarea');
-      inputs.forEach(input => input.value = '');
-    }
+  if (currentStep === 6) {
+    userSelections.figureTitle = null;
+    userSelections.xAxisLabel = null;
+    userSelections.yAxisLabel = null;
+    userSelections.xAxisMin = null;
+    userSelections.xAxisMax = null;
+    userSelections.yAxisMin = null;
+    userSelections.yAxisMax = null;
 
-    userSelections.plotArgs = {};
-    userSelections.plotType = null;
-
-    generatePlotPreview();
+    // Reset inputs to default
+    document.getElementById('figure-title').value = '';
+    document.getElementById('x-axis_label').value = '';
+    document.getElementById('y-axis_label').value = '';
+    ['x-axis_min', 'x-axis_max', 'y-axis_min', 'y-axis_max'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
   }
 
-  else if (currentStep === 6) {
-    userSelections.xAxisLabel = null;
-    userSelections.yAxisLabel = null;
-    userSelections.figureTitle = null;
-    userSelections.xAxisMin = null;
-    userSelections.xAxisMax = null;
-    userSelections.yAxisMin = null;
-    userSelections.yAxisMax = null;
+  else if (currentStep === 5) {
+    const plotType = userSelections.plotType;
+    userSelections.plotType = null;
+    userSelections.plotArgs = {};
 
-  } else if (currentStep === 5) {
-    userSelections.xAxisLabel = null;
-    userSelections.yAxisLabel = null;
-    userSelections.figureTitle = null;
-    userSelections.xAxisMin = null;
-    userSelections.xAxisMax = null;
-    userSelections.yAxisMin = null;
-    userSelections.yAxisMax = null;
+    if (plotType) {
+      const plotArgsBlock = document.querySelector(`#args-${plotType}`);
+      if (plotArgsBlock) {
+        const inputs = plotArgsBlock.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+          if (input.tagName === 'SELECT') {
+            input.selectedIndex = 0; // Reset to first option
+          } else {
+            input.value = '';
+          }
+        });
+      }
+    }
+  }
 
-  } else if (currentStep === 4) {
+  else if (currentStep === 4) {
     userSelections.plotContext = null;
     userSelections.plotStyle = null;
     userSelections.plotPalette = null;
 
-  } else if (currentStep === 3) {
-    userSelections.DataFrame = null;
+    ['context-select', 'style-select', 'palette-select'].forEach(id => {
+      document.getElementById(id).selectedIndex = 0;
+    });
 
-  } else if (currentStep === 2) {
+    // Clear and hide plot preview
+    const plotPreviewImg = document.getElementById('plot-preview');
+    const plotPreviewContainer = document.getElementById('plot-preview-container');
+
+    if (plotPreviewImg) {
+      plotPreviewImg.src = ''; // Clears the image
+    }
+  }
+
+  else if (currentStep === 3) {
+ // Reset file input
+  const fileInput = document.getElementById('file-upload');
+  if (fileInput) {
+    fileInput.value = '';  // Clears selected file from UI
+  }
+
+  // Clear uploaded data cache if needed
+  window.uploadedColumns = null;
+  userSelections.DataFrame = null;
+}
+  else if (currentStep === 2) {
     userSelections.environment = null;
+    document.getElementById('env-select').selectedIndex = 0;
   }
 
   updateCodePreview();
 }
+
 
 //---
 // Helper Functions
