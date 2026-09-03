@@ -39,7 +39,7 @@ def upload_csv():
         except Exception as e:
             return jsonify({"success": False, "error": str(e)})
 
-@main_routes.route('/home')
+@main_routes.route('/')
 # Plot types introduced here, we typically pull the args from the function for said plotype included in matplotlib,
 # as these give more granular control over the exact final appearance of the figure.
 # **TODO: Which plots call sns.plot instead of plt?**
